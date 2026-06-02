@@ -501,20 +501,21 @@
                       const startIdx = headerRowIdx + 2;
                       for (let i = startIdx; i < rows.length; i++) {
                           const row = rows[i];
+                          // Detener si llegamos a secciones no-producto
+                          if (row.items.some(it => /Peso\s*Neto|TOTALES|Certificamos|Timbre/i.test(it.text))) break;
                           const sorted = [...row.items].sort((a, b) => a.x - b.x);
-                          // Buscar número de cajas en x < 80
-                          const cajasItem = sorted.find(it => /^\d[\d.,]*$/.test(it.text) && it.x < 80);
+                          // Buscar número de cajas en x < 80 (max 10 caracteres para evitar códigos de barras)
+                          const cajasItem = sorted.find(it => /^\d[\d.,]*$/.test(it.text) && it.x < 80 && it.text.length <= 10);
                           if (!cajasItem) continue;
                           const cajas = parseInt(cajasItem.text.replace(/\./g, '').replace(',', ''));
                           if (cajas <= 0 || isNaN(cajas)) continue;
-                          // Buscar cantidad con KG/LB
+                          // Buscar cantidad con KG/LB (obligatorio para producto válido)
                           const qtyItem = sorted.find(it => /\d.*(KG|LB)$/i.test(it.text) && it.x >= 80 && it.x <= 150);
+                          if (!qtyItem) continue; // Si no tiene KG/LB, no es producto
                           let quantity = 0, qtyUnit = 'KG';
-                          if (qtyItem) {
-                              const um = qtyItem.text.match(/(KG|LB)$/i);
-                              qtyUnit = um ? um[1].toUpperCase() : 'KG';
-                              quantity = parseFloat(qtyItem.text.replace(/\s*(KG|LB)$/i, '').replace(/\./g, '').replace(',', '.'));
-                          }
+                          const um = qtyItem.text.match(/(KG|LB)$/i);
+                          qtyUnit = um ? um[1].toUpperCase() : 'KG';
+                          quantity = parseFloat(qtyItem.text.replace(/\s*(KG|LB)$/i, '').replace(/\./g, '').replace(',', '.'));
                           // Buscar valor unitario (x entre 440 y 530)
                           const unitItem = sorted.find(it => /^\d[\d.,]+$/.test(it.text) && it.x >= 440 && it.x <= 530);
                           let unitValue = unitItem ? parseFloat(unitItem.text.replace(/\./g, '').replace(',', '.')) : 0;
