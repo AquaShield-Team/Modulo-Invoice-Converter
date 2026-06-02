@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaShield | Factura Mermas</title>
+    <meta name="description" content="Ajuste de cajas por merma — AquaShield by AquaChile">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+    <style>
+        /* ── Industrial Fusion: Dark Theme — Manual de Marca AquaChile ── */
+        :root {
+            --accent:#EB5F0A; --accent-glow:rgba(235,95,10,0.25); --accent-hover:#f57423; --accent-dim:rgba(235,95,10,0.12);
+            --bg-main:#2d3a45; --bg-sidebar:#3a4a58; --bg-card:rgba(58,74,88,0.85); --bg-card-hover:rgba(68,85,99,0.95); --bg-input:#445563;
+            --border-main:#4a5a68; --border-hover:#5a6a78; --border-accent:rgba(235,95,10,0.3);
+            --text-primary:#f8fafc; --text-secondary:#e4e6eb; --text-muted:#8fa0b0;
+            --secondary:#445563; --success:#10b981; --danger:#ff6b6b; --warning:#fbbf24; --info:#60a5fa;
+            --shadow-card:0 4px 24px rgba(0,0,0,0.2); --shadow-glow:0 0 30px rgba(235,95,10,0.15);
+            --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+            --font-heading:'Quicksand',sans-serif; --font-mono:'JetBrains Mono','Consolas',monospace;
+            --transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:var(--font);background:var(--bg-main);color:var(--text-primary);-webkit-font-smoothing:antialiased;overflow:hidden;height:100vh;}
+        .mono{font-family:var(--font-mono);}
+        .text-tiny{font-size:0.7rem;}
+
+        /* Scrollbar */
+        ::-webkit-scrollbar{width:6px;} ::-webkit-scrollbar-track{background:var(--bg-main);} ::-webkit-scrollbar-thumb{background:var(--secondary);border-radius:3px;} ::-webkit-scrollbar-thumb:hover{background:var(--accent);}
+
+        /* Header */
+        .workspace-header{height:56px;background:var(--bg-sidebar);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-main);flex-shrink:0;}
+        .brand-logo{height:32px;object-fit:contain;}
+
+        /* Dropzone */
+        .dropzone{border:2px dashed var(--border-main);border-radius:16px;padding:3rem;text-align:center;cursor:pointer;transition:var(--transition);background:var(--bg-card);}
+        .dropzone:hover,.dropzone.active{border-color:var(--accent);background:var(--accent-dim);transform:scale(1.02);}
+
+        /* Table */
+        .mermas-table{width:100%;border-collapse:separate;border-spacing:0;font-size:0.75rem;}
+        .mermas-table thead th{background:var(--bg-sidebar);color:var(--text-muted);padding:0.6rem 0.8rem;text-align:left;font-weight:700;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:1;font-family:var(--font-heading);}
+        .mermas-table tbody td{padding:0.5rem 0.8rem;border-bottom:1px solid var(--border-main);transition:var(--transition);vertical-align:middle;}
+        .mermas-table tbody tr:hover td{background:var(--bg-card-hover);}
+        .mermas-table tfoot td{padding:0.7rem 0.8rem;font-weight:700;border-top:2px solid var(--accent);font-family:var(--font-heading);font-size:0.85rem;}
+
+        /* Editable input */
+        .cajas-input{width:70px;background:var(--accent-dim);border:1px solid var(--accent);border-radius:6px;padding:4px 8px;color:var(--accent);font-family:var(--font-mono);font-weight:700;font-size:0.8rem;text-align:center;outline:none;transition:var(--transition);}
+        .cajas-input:focus{box-shadow:0 0 0 3px var(--accent-glow);border-color:var(--accent-hover);}
+
+        /* Changed indicator */
+        .changed{color:var(--accent);font-weight:700;}
+        .original{color:var(--text-muted);text-decoration:line-through;font-size:0.65rem;margin-left:4px;}
+
+        /* Button */
+        .btn-primary{display:flex;align-items:center;gap:0.5rem;background:var(--accent);color:white;padding:0.6rem 1.5rem;border-radius:10px;border:none;font-family:var(--font-heading);font-weight:700;font-size:0.85rem;cursor:pointer;text-transform:uppercase;letter-spacing:1px;transition:var(--transition);}
+        .btn-primary:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 8px 20px var(--accent-glow);}
+        .btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none;}
+        .btn-secondary{display:flex;align-items:center;gap:0.5rem;background:var(--secondary);color:white;padding:0.5rem 1rem;border-radius:8px;border:none;font-family:var(--font-heading);font-weight:600;font-size:0.75rem;cursor:pointer;transition:var(--transition);}
+        .btn-secondary:hover{background:var(--border-hover);}
+
+        /* Toast */
+        #toast-container{position:fixed;bottom:2rem;right:2rem;display:flex;flex-direction:column;gap:0.6rem;z-index:9999;pointer-events:none;}
+        .toast{pointer-events:auto;background:var(--bg-card);border:1px solid var(--border-main);border-left:4px solid var(--accent);padding:0.8rem 1.2rem;border-radius:10px;box-shadow:var(--shadow-card);animation:toastIn 0.35s ease-out;font-size:0.8rem;color:var(--text-primary);display:flex;align-items:center;gap:0.6rem;max-width:380px;}
+        .toast-success{border-left-color:var(--success);} .toast-error{border-left-color:var(--danger);} .toast-warning{border-left-color:var(--warning);}
+        .toast-out{animation:toastOut 0.3s ease-in forwards;}
+        @keyframes toastIn{from{opacity:0;transform:translateX(60px);}to{opacity:1;transform:translateX(0);}}
+        @keyframes toastOut{from{opacity:1;transform:translateX(0);}to{opacity:0;transform:translateX(60px);}}
+
+        /* Stats cards */
+        .stat-card{background:var(--bg-card);border:1px solid var(--border-main);border-radius:12px;padding:1rem;display:flex;flex-direction:column;gap:0.3rem;transition:var(--transition);}
+        .stat-card:hover{border-color:var(--accent);box-shadow:var(--shadow-glow);}
+        .stat-label{font-size:0.65rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;font-family:var(--font-heading);}
+        .stat-value{font-size:1.3rem;font-weight:800;font-family:var(--font-mono);}
+
+        /* Nav link */
+        .nav-link{color:var(--text-muted);text-decoration:none;font-size:0.7rem;font-family:var(--font-mono);font-weight:600;padding:4px 10px;border-radius:6px;border:1px solid var(--border-main);transition:var(--transition);}
+        .nav-link:hover{color:var(--accent);border-color:var(--accent);}
+
+        /* Preview panel */
+        .preview-panel{background:var(--bg-card);border:1px solid var(--border-main);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;}
+        .preview-header{padding:0.6rem 1rem;background:var(--bg-sidebar);border-bottom:1px solid var(--border-main);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+        .preview-header .title{font-family:var(--font-heading);font-weight:700;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);}
+        .preview-canvas-wrap{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:1rem;background:rgba(0,0,0,0.15);}
+        .preview-canvas-wrap canvas{box-shadow:0 4px 20px rgba(0,0,0,0.4);border-radius:4px;max-width:100%;}
+        .zoom-btn{background:var(--secondary);border:none;color:var(--text-primary);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:1rem;font-weight:700;transition:var(--transition);display:flex;align-items:center;justify-content:center;}
+        .zoom-btn:hover{background:var(--accent);}
+    </style>
+</head>
+<body>
+    <div id="root" style="display:flex;flex-direction:column;height:100vh;overflow:hidden;"></div>
+    <div id="toast-container"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback } = React;
+
+        function showToast(msg, type='info', dur=4000) {
+            const c = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            const icons = { success:'✓', error:'✕', warning:'⚠', info:'ℹ' };
+            t.className = 'toast toast-' + type;
+            t.innerHTML = '<span style="font-size:1rem;font-weight:700;">' + (icons[type]||'ℹ') + '</span><span>' + msg + '</span>';
+            c.appendChild(t);
+            setTimeout(() => { t.classList.add('toast-out'); setTimeout(() => t.remove(), 300); }, dur);
+        }
+
+        // ── PDF Table Parser (calibrado con coordenadas exactas) ──
+        async function extractTableFromPDF(pdfBytes) {
+            const pdf = await pdfjsLib.getDocument({data: new Uint8Array(pdfBytes)}).promise;
+            const page = await pdf.getPage(1);
+            const textContent = await page.getTextContent();
+            const viewport = page.getViewport({scale: 1});
+
+            const items = textContent.items.map(item => ({
+                text: item.str.trim(),
+                x: Math.round(item.transform[4]),
+                y: Math.round(item.transform[5]),
+                width: Math.round(item.width),
+                fontSize: Math.round(item.transform[0])
+            })).filter(i => i.text);
+
+            // Sort by Y descending, then X ascending
+            items.sort((a, b) => b.y - a.y || a.x - b.x);
+
+            // Group into rows (items within 4px Y = same row)
+            const rows = [];
+            let currentRow = [], currentY = items[0]?.y;
+            for (const item of items) {
+                if (Math.abs(item.y - currentY) > 4) {
+                    if (currentRow.length > 0) rows.push({y: currentY, items: [...currentRow]});
+                    currentRow = []; currentY = item.y;
+                }
+                currentRow.push(item);
+            }
+            if (currentRow.length > 0) rows.push({y: currentY, items: currentRow});
+
+            // Find rows containing "Cajas" — each one marks a product
+            const productRows = [];
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const cajasItem = row.items.find(it => /caja/i.test(it.text));
+                if (!cajasItem) continue;
+
+                // FORMAT A: "¬ 871 Cajas" in same item (e.g. "(Oncorhynchus Kisutch) ¬ 871 Cajas")
+                // FORMAT B: "175 Cajas" standalone (¬ is at end of previous row)
+                let cajas = 0;
+                let cajasFormat = 'unknown';
+                const matchA = cajasItem.text.match(/[¬\-]\s*(\d[\d.,]*)\s*Caja/i);
+                const matchB = cajasItem.text.match(/^(\d[\d.,]*)\s*Caja/i);
+
+                if (matchA) {
+                    cajas = parseInt(matchA[1].replace(/[.,]/g, ''));
+                    cajasFormat = 'combined'; // ¬ + number in same text item
+                } else if (matchB) {
+                    cajas = parseInt(matchB[1].replace(/[.,]/g, ''));
+                    cajasFormat = 'separate'; // number alone, ¬ in previous row
+                } else {
+                    continue;
+                }
+
+                // Look upward for the main data row (has product code at x < 80)
+                let mainRow = null;
+                for (let j = i - 1; j >= Math.max(0, i - 4); j--) {
+                    const r = rows[j];
+                    const hasCode = r.items.some(it => /^\d{6,8}$/.test(it.text) && it.x < 80);
+                    if (hasCode) { mainRow = r; break; }
+                }
+                if (!mainRow) continue;
+
+                const sorted = [...mainRow.items].sort((a, b) => a.x - b.x);
+
+                // Code: x < 80, 6-8 digit number
+                const codeItem = sorted.find(it => /^\d{6,8}$/.test(it.text) && it.x < 80);
+                const code = codeItem ? codeItem.text : '';
+
+                // Quantity: x ~88-150, format "X.XXX,XX KG" or "X.XXX,XX LB"
+                const qtyItem = sorted.find(it => /\d.*(KG|LB)$/i.test(it.text) && it.x >= 80 && it.x <= 150);
+                let quantity = 0;
+                let qtyUnit = 'KG';
+                if (qtyItem) {
+                    const unitMatch = qtyItem.text.match(/(KG|LB)$/i);
+                    qtyUnit = unitMatch ? unitMatch[1].toUpperCase() : 'KG';
+                    quantity = parseFloat(qtyItem.text.replace(/\s*(KG|LB)$/i, '').replace(/\./g, '').replace(',', '.'));
+                }
+
+                // Unit value: x ~440-530
+                const unitItem = sorted.find(it => /^\d[\d.,]+$/.test(it.text) && it.x >= 440 && it.x <= 530);
+                let unitValue = 0;
+                if (unitItem) {
+                    unitValue = parseFloat(unitItem.text.replace(/\./g, '').replace(',', '.'));
+                }
+
+                // Total: x > 530
+                const totalItem = sorted.filter(it => /^\d[\d.,]+$/.test(it.text) && it.x > 530).pop();
+                let total = 0;
+                if (totalItem) {
+                    total = parseFloat(totalItem.text.replace(/\./g, '').replace(',', '.'));
+                }
+
+                // Description
+                let description = '';
+                const mainRowIdx = rows.indexOf(mainRow);
+                for (let j = i - 1; j > mainRowIdx; j--) {
+                    if (j < 0) break;
+                    const descItems = rows[j].items.filter(it => it.x >= 130 && it.x < 450);
+                    if (descItems.length > 0) description += descItems.map(it => it.text).join(' ') + ' ';
+                }
+                const mainDesc = sorted.filter(it => it.x >= 130 && it.x < 450).map(it => it.text).join(' ');
+                description = mainDesc + ' ' + description;
+
+                const qtyPerBox = cajas > 0 ? quantity / cajas : 0;
+
+                // For FORMAT B, find the row with "¬" at the end (previous row) for whiteout
+                let symbolRowY = null;
+                if (cajasFormat === 'separate') {
+                    for (let j = i - 1; j >= Math.max(0, i - 2); j--) {
+                        const hasSymbol = rows[j].items.some(it => /¬\s*$/.test(it.text));
+                        if (hasSymbol) {
+                            const symItem = rows[j].items.find(it => /¬\s*$/.test(it.text));
+                            symbolRowY = { y: rows[j].y, item: symItem };
+                            break;
+                        }
+                    }
+                }
+
+                productRows.push({
+                    id: crypto.randomUUID(),
+                    code,
+                    description: description.trim(),
+                    originalCajas: cajas,
+                    newCajas: cajas,
+                    qtyPerBox: Math.round(qtyPerBox * 10000) / 10000,
+                    qtyUnit,
+                    unitValue,
+                    originalQuantity: quantity,
+                    originalTotal: total,
+                    cajasFormat,
+                    // PDF coordinates
+                    mainRowY: mainRow.y,
+                    cajasRowY: row.y,
+                    qtyItem: qtyItem ? { x: qtyItem.x, y: mainRow.y, width: qtyItem.width } : null,
+                    totalItem: totalItem ? { x: totalItem.x, y: mainRow.y, width: totalItem.width } : null,
+                    cajasItemCoords: { x: cajasItem.x, y: row.y, width: cajasItem.width, text: cajasItem.text },
+                    symbolRow: symbolRowY, // only for FORMAT B
+                });
+            }
+
+            // Find TOTAL CIF / TOTAL CPT / TOTAL FOB row
+            let grandTotalY = 0, grandTotalValue = 0, grandTotalX = 540;
+            for (const row of rows) {
+                const hasTotalLine = row.items.some(it => /TOTAL\s*(CIF|CPT|FOB|CFR)/i.test(it.text));
+                if (hasTotalLine) {
+                    const numItem = row.items.filter(it => /^\d[\d.,]+$/.test(it.text) && it.x > 480).pop();
+                    if (numItem) {
+                        grandTotalValue = parseFloat(numItem.text.replace(/\./g, '').replace(',', '.'));
+                        grandTotalY = numItem.y;
+                        grandTotalX = numItem.x;
+                    }
+                    break;
+                }
+            }
+
+            return {
+                products: productRows,
+                grandTotal: { y: grandTotalY, value: grandTotalValue, x: grandTotalX },
+                pageSize: { width: viewport.width, height: viewport.height }
+            };
+        }
+
+        // ── Format number as Chilean format ──
+        const fmtNum = (n, decimals=2) => {
+            const parts = n.toFixed(decimals).split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            return parts.join(',');
+        };
+
+        // ── Main App ──
+        function App() {
+            const [pdfBytes, setPdfBytes] = useState(null);
+            const [fileName, setFileName] = useState('');
+            const [products, setProducts] = useState([]);
+            const [grandTotal, setGrandTotal] = useState({ y: 0, value: 0, x: 540 });
+            const [pageSize, setPageSize] = useState({ width: 612, height: 842 });
+            const [isDragging, setIsDragging] = useState(false);
+            const [isProcessing, setIsProcessing] = useState(false);
+            const [isParsing, setIsParsing] = useState(false);
+            const [showPreview, setShowPreview] = useState(true);
+            const [previewScale, setPreviewScale] = useState(1.2);
+            const fileInputRef = useRef(null);
+            const canvasRef = useRef(null);
+            const previewTimerRef = useRef(null);
+
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+            const loadPDF = async (file) => {
+                setIsParsing(true);
+                try {
+                    const bytes = new Uint8Array(await file.arrayBuffer());
+                    setPdfBytes(bytes);
+                    setFileName(file.name);
+                    const result = await extractTableFromPDF(bytes);
+                    setProducts(result.products);
+                    setGrandTotal(result.grandTotal);
+                    setPageSize(result.pageSize);
+                    if (result.products.length === 0) {
+                        showToast('No se encontraron productos con "Cajas" en este PDF', 'warning');
+                    } else {
+                        showToast(result.products.length + ' productos encontrados', 'success');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast('Error al analizar el PDF: ' + err.message, 'error');
+                }
+                setIsParsing(false);
+            };
+
+            const updateCajas = (id, value) => {
+                const n = parseInt(value) || 0;
+                setProducts(prev => prev.map(p => p.id === id ? { ...p, newCajas: n } : p));
+            };
+
+            const resetAll = () => {
+                setProducts(prev => prev.map(p => ({ ...p, newCajas: p.originalCajas })));
+                showToast('Valores restaurados', 'info');
+            };
+
+            // Calculated values
+            const calcProducts = products.map(p => {
+                const newQty = p.newCajas * p.qtyPerBox;
+                const newTotal = newQty * p.unitValue;
+                const changed = p.newCajas !== p.originalCajas;
+                return { ...p, newQuantity: newQty, newTotal, changed };
+            });
+            const newGrandTotal = calcProducts.reduce((sum, p) => sum + p.newTotal, 0);
+            const totalCajasOrig = products.reduce((s, p) => s + p.originalCajas, 0);
+            const totalCajasNew = products.reduce((s, p) => s + p.newCajas, 0);
+            const hasChanges = calcProducts.some(p => p.changed);
+
+            // Build modified PDF bytes (shared by preview and download)
+            const buildModifiedPDF = async () => {
+                if (!pdfBytes || !window.PDFLib) return null;
+                try {
+                    const { PDFDocument, StandardFonts, rgb } = window.PDFLib;
+                    const pdfDoc = await PDFDocument.load(new Uint8Array(pdfBytes));
+                    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+                    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+                    const page = pdfDoc.getPages()[0];
+                    // Correction offsets: pdf.js coords → pdf-lib coords
+                    const dx = -2;  // shift text left
+                    const dy = -2;  // shift text down
+                    const fontSize = 7;
+
+                    for (const p of calcProducts) {
+                        if (!p.changed) continue;
+
+                        // White out and rewrite QUANTITY
+                        if (p.qtyItem) {
+                            page.drawRectangle({
+                                x: p.qtyItem.x - 8, y: p.qtyItem.y - 5,
+                                width: p.qtyItem.width + 25, height: 16,
+                                color: rgb(1,1,1)
+                            });
+                            page.drawText(fmtNum(p.newQuantity) + ' ' + p.qtyUnit, {
+                                x: p.qtyItem.x + dx, y: p.qtyItem.y + dy,
+                                size: fontSize, font, color: rgb(0,0,0)
+                            });
+                        }
+
+                        // White out and rewrite TOTAL
+                        if (p.totalItem) {
+                            page.drawRectangle({
+                                x: p.totalItem.x - 12, y: p.totalItem.y - 5,
+                                width: p.totalItem.width + 30, height: 16,
+                                color: rgb(1,1,1)
+                            });
+                            page.drawText(fmtNum(p.newTotal), {
+                                x: p.totalItem.x + dx, y: p.totalItem.y + dy,
+                                size: fontSize, font, color: rgb(0,0,0)
+                            });
+                        }
+
+                        // White out and rewrite CAJAS
+                        if (p.cajasFormat === 'combined') {
+                            const fullText = p.cajasItemCoords.text;
+                            const symbolIdx = fullText.indexOf('\u00ac');
+                            if (symbolIdx >= 0) {
+                                const proportion = symbolIdx / fullText.length;
+                                const cajasStartX = p.cajasItemCoords.x + (p.cajasItemCoords.width * proportion);
+                                const remainingWidth = p.cajasItemCoords.width - (p.cajasItemCoords.width * proportion);
+                                page.drawRectangle({
+                                    x: cajasStartX - 5, y: p.cajasItemCoords.y - 5,
+                                    width: remainingWidth + 15, height: 14,
+                                    color: rgb(1,1,1)
+                                });
+                                page.drawText('\u00ac ' + p.newCajas + ' Cajas', {
+                                    x: cajasStartX + dx, y: p.cajasItemCoords.y + dy,
+                                    size: 6, font, color: rgb(0,0,0)
+                                });
+                            }
+                        } else if (p.cajasFormat === 'separate') {
+                            page.drawRectangle({
+                                x: p.cajasItemCoords.x - 5, y: p.cajasItemCoords.y - 5,
+                                width: p.cajasItemCoords.width + 20, height: 14,
+                                color: rgb(1,1,1)
+                            });
+                            page.drawText(p.newCajas + ' Cajas', {
+                                x: p.cajasItemCoords.x + dx, y: p.cajasItemCoords.y + dy,
+                                size: 6, font, color: rgb(0,0,0)
+                            });
+                        }
+                    }
+
+                    // Update TOTAL CIF/CPT/FOB
+                    if (grandTotal.y && hasChanges) {
+                        page.drawRectangle({
+                            x: grandTotal.x - 12, y: grandTotal.y - 5,
+                            width: 75, height: 16,
+                            color: rgb(1,1,1)
+                        });
+                        page.drawText(fmtNum(newGrandTotal), {
+                            x: grandTotal.x + dx, y: grandTotal.y + dy,
+                            size: 8, font: fontBold, color: rgb(0,0,0)
+                        });
+                    }
+
+                    const modifiedBytes = await pdfDoc.save();
+                    return modifiedBytes;
+                } catch (err) {
+                    console.error(err);
+                    showToast('Error al generar PDF: ' + err.message, 'error');
+                    return null;
+                }
+            };
+
+            // Download PDF
+            const downloadPDF = async () => {
+                setIsProcessing(true);
+                const bytes = await buildModifiedPDF();
+                if (bytes) {
+                    const blob = new Blob([bytes], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'MERMA_' + fileName;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    showToast('PDF generado: MERMA_' + fileName, 'success');
+                }
+                setIsProcessing(false);
+            };
+
+            // Render preview to canvas
+            const renderPreview = useCallback(async () => {
+                if (!pdfBytes || !canvasRef.current) return;
+                try {
+                    let bytesToRender = pdfBytes;
+                    if (hasChanges) {
+                        const modified = await buildModifiedPDF();
+                        if (modified) bytesToRender = modified;
+                    }
+                    const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(bytesToRender) }).promise;
+                    const page = await pdf.getPage(1);
+                    const viewport = page.getViewport({ scale: previewScale });
+                    const canvas = canvasRef.current;
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    await page.render({ canvasContext: ctx, viewport }).promise;
+                } catch (err) {
+                    console.error('Preview error:', err);
+                }
+            }, [pdfBytes, products, previewScale, hasChanges]);
+
+            // Auto-update preview with debounce
+            useEffect(() => {
+                if (!pdfBytes || !showPreview) return;
+                if (previewTimerRef.current) clearTimeout(previewTimerRef.current);
+                previewTimerRef.current = setTimeout(() => renderPreview(), 400);
+                return () => clearTimeout(previewTimerRef.current);
+            }, [pdfBytes, products, previewScale, showPreview, renderPreview]);
+
+            return (
+                <>
+                    {/* ═══ HEADER ═══ */}
+                    <header className="workspace-header">
+                        <div style={{display:'flex',alignItems:'center',gap:'1rem'}}>
+                            <img src="logo_aquachile_dark.png" alt="AquaChile" className="brand-logo" />
+                            <div style={{display:'flex',flexDirection:'column',lineHeight:'1.1'}}>
+                                <span style={{fontFamily:'var(--font-heading)',fontWeight:700,fontSize:'1.3rem',letterSpacing:'2px'}}>AQUASHIELD</span>
+                                <span style={{fontSize:'0.75rem',color:'var(--text-muted)'}}>by AquaChile</span>
+                            </div>
+                            <div style={{height:'28px',width:'1px',backgroundColor:'var(--border-main)',margin:'0 0.3rem'}}></div>
+                            <div style={{display:'flex',flexDirection:'column',lineHeight:'1.1'}}>
+                                <span style={{fontFamily:'var(--font-heading)',fontWeight:600,fontSize:'0.7rem',color:'var(--accent)',letterSpacing:'2px',textTransform:'uppercase'}}>Módulo</span>
+                                <span style={{fontFamily:'var(--font-heading)',fontWeight:700,fontSize:'1rem',letterSpacing:'1px',textTransform:'uppercase'}}>Factura Mermas</span>
+                            </div>
+                        </div>
+                        <div style={{display:'flex',alignItems:'center',gap:'1rem'}}>
+                            <a href="index.html" className="nav-link">← Commercial Invoice</a>
+                        </div>
+                    </header>
+
+                    {/* ═══ MAIN ═══ */}
+                    <div style={{flex:1,overflow:'hidden',display:'flex',flexDirection:'row',padding:'1.2rem 1.5rem',gap:'1rem'}}>
+
+                        {!pdfBytes ? (
+                            /* ── DROPZONE ── */
+                            <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                                <div
+                                    className={`dropzone ${isDragging ? 'active' : ''}`}
+                                    style={{maxWidth:'500px',width:'100%'}}
+                                    onClick={() => fileInputRef.current?.click()}
+                                    onDragOver={e => {e.preventDefault(); setIsDragging(true);}}
+                                    onDragLeave={() => setIsDragging(false)}
+                                    onDrop={e => {e.preventDefault(); setIsDragging(false); if(e.dataTransfer.files[0]) loadPDF(e.dataTransfer.files[0]);}}
+                                >
+                                    <input ref={fileInputRef} type="file" accept=".pdf" style={{display:'none'}} onChange={e => { if(e.target.files[0]) loadPDF(e.target.files[0]); }} />
+                                    <div style={{width:'60px',height:'60px',borderRadius:'50%',background:'var(--accent-dim)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 1rem',color:'var(--accent)'}}>
+                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg>
+                                    </div>
+                                    <p style={{fontFamily:'var(--font-heading)',fontWeight:700,fontSize:'0.9rem'}}>Cargar Factura para Mermas</p>
+                                    <p className="text-tiny" style={{color:'var(--text-muted)',marginTop:'0.4rem'}}>Arrastra la factura PDF o haz clic para seleccionar</p>
+                                </div>
+                            </div>
+                        ) : isParsing ? (
+                            <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                                <p style={{fontFamily:'var(--font-heading)',fontWeight:600,color:'var(--accent)'}}>⟳ Analizando PDF...</p>
+                            </div>
+                        ) : (
+                            /* ── TABLE + PREVIEW ── */
+                            <>
+                            {/* Left: Editor Panel */}
+                            <div style={{flex: showPreview ? '0 0 55%' : '1', display:'flex', flexDirection:'column', gap:'0.8rem', overflow:'hidden'}}>
+                                {/* Stats row */}
+                                <div style={{display:'flex',gap:'0.8rem',flexShrink:0}}>
+                                    <div className="stat-card" style={{flex:1}}>
+                                        <span className="stat-label">Archivo</span>
+                                        <span className="mono" style={{fontSize:'0.75rem',color:'var(--text-secondary)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{fileName}</span>
+                                    </div>
+                                    <div className="stat-card" style={{flex:1}}>
+                                        <span className="stat-label">Productos</span>
+                                        <span className="stat-value" style={{color:'var(--info)'}}>{products.length}</span>
+                                    </div>
+                                    <div className="stat-card" style={{flex:1}}>
+                                        <span className="stat-label">Cajas Original</span>
+                                        <span className="stat-value">{totalCajasOrig.toLocaleString()}</span>
+                                    </div>
+                                    <div className="stat-card" style={{flex:1}}>
+                                        <span className="stat-label">Cajas Merma</span>
+                                        <span className="stat-value" style={{color: hasChanges ? 'var(--accent)' : 'var(--text-primary)'}}>{totalCajasNew.toLocaleString()}</span>
+                                    </div>
+                                    <div className="stat-card" style={{flex:1}}>
+                                        <span className="stat-label">Diferencia</span>
+                                        <span className="stat-value" style={{color: totalCajasNew < totalCajasOrig ? 'var(--danger)' : 'var(--success)'}}>{totalCajasNew - totalCajasOrig}</span>
+                                    </div>
+                                    <div className="stat-card" style={{flex:1.3}}>
+                                        <span className="stat-label">Nuevo Total</span>
+                                        <span className="stat-value" style={{color: hasChanges ? 'var(--accent)' : 'var(--text-primary)'}}>${fmtNum(newGrandTotal)}</span>
+                                    </div>
+                                </div>
+
+                                {/* Table */}
+                                <div style={{flex:1,overflow:'auto',borderRadius:'12px',border:'1px solid var(--border-main)',background:'var(--bg-card)'}}>
+                                    <table className="mermas-table">
+                                        <thead>
+                                            <tr>
+                                                <th style={{width:'80px'}}>Código</th>
+                                                <th style={{width:'80px'}}>Cajas</th>
+                                                <th style={{width:'100px'}}>Cantidad</th>
+                                                <th>Descripción</th>
+                                                <th style={{width:'90px'}}>Unid/Caja</th>
+                                                <th style={{width:'100px'}}>Valor Unit.</th>
+                                                <th style={{width:'120px',textAlign:'right'}}>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {calcProducts.map(p => (
+                                                <tr key={p.id} style={{background: p.changed ? 'rgba(235,95,10,0.05)' : 'transparent'}}>
+                                                    <td className="mono" style={{fontWeight:600}}>{p.code}</td>
+                                                    <td>
+                                                        <input
+                                                            type="number"
+                                                            className="cajas-input"
+                                                            value={p.newCajas}
+                                                            min="0"
+                                                            onChange={e => updateCajas(p.id, e.target.value)}
+                                                        />
+                                                        {p.changed && <span className="original">{p.originalCajas}</span>}
+                                                    </td>
+                                                    <td className="mono">
+                                                        <span className={p.changed ? 'changed' : ''}>{fmtNum(p.newQuantity)} {p.qtyUnit}</span>
+                                                        {p.changed && <span className="original">{fmtNum(p.originalQuantity)}</span>}
+                                                    </td>
+                                                    <td style={{fontSize:'0.65rem',color:'var(--text-secondary)',maxWidth:'250px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.description}</td>
+                                                    <td className="mono text-tiny" style={{color:'var(--text-muted)'}}>{fmtNum(p.qtyPerBox, 3)}</td>
+                                                    <td className="mono text-tiny">{fmtNum(p.unitValue, 4)}</td>
+                                                    <td className="mono" style={{textAlign:'right',fontWeight:700}}>
+                                                        <span className={p.changed ? 'changed' : ''}>${fmtNum(p.newTotal)}</span>
+                                                        {p.changed && <span className="original">${fmtNum(p.originalTotal)}</span>}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td></td>
+                                                <td style={{color:'var(--accent)'}}>{totalCajasNew.toLocaleString()}</td>
+                                                <td className="mono" style={{color:'var(--accent)'}}>{fmtNum(calcProducts.reduce((s,p) => s + p.newQuantity, 0))}</td>
+                                                <td></td><td></td><td style={{textAlign:'right',fontFamily:'var(--font-heading)'}}>TOTAL</td>
+                                                <td className="mono" style={{textAlign:'right',color:'var(--accent)',fontSize:'1rem'}}>${fmtNum(newGrandTotal)}</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
+                                {/* Actions */}
+                                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexShrink:0}}>
+                                    <div style={{display:'flex',gap:'0.5rem'}}>
+                                        <button className="btn-secondary" onClick={() => {setPdfBytes(null); setProducts([]); setFileName('');}}>
+                                            ↩ Cambiar PDF
+                                        </button>
+                                        <button className="btn-secondary" onClick={resetAll} disabled={!hasChanges}>
+                                            ↺ Restaurar Original
+                                        </button>
+                                    </div>
+                                    <button className="btn-secondary" onClick={() => setShowPreview(!showPreview)}>
+                                        {showPreview ? '◧ Ocultar Preview' : '◫ Mostrar Preview'}
+                                    </button>
+                                    <button className="btn-primary" onClick={downloadPDF} disabled={!hasChanges || isProcessing}>
+                                        {isProcessing ? '⟳ Generando...' : '⬇ Generar PDF Merma'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Right: PDF Preview Panel */}
+                            {showPreview && (
+                                <div className="preview-panel" style={{flex:'0 0 44%'}}>
+                                    <div className="preview-header">
+                                        <span className="title">📄 Vista Previa</span>
+                                        <div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}>
+                                            <button className="zoom-btn" onClick={() => setPreviewScale(s => Math.max(0.5, s - 0.2))}>−</button>
+                                            <span className="mono text-tiny" style={{color:'var(--text-muted)',minWidth:'35px',textAlign:'center'}}>{Math.round(previewScale*100)}%</span>
+                                            <button className="zoom-btn" onClick={() => setPreviewScale(s => Math.min(3, s + 0.2))}>+</button>
+                                        </div>
+                                    </div>
+                                    <div className="preview-canvas-wrap">
+                                        <canvas ref={canvasRef} style={{background:'white'}} />
+                                    </div>
+                                </div>
+                            )}
+                            </>
+                        )}
+                    </div>
+                </>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>

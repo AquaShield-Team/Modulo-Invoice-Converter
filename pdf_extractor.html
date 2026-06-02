@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html><head><title>PDF Text Extractor</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head><body style="font-family:monospace;background:#1a1a2e;color:#e0e0e0;padding:2rem;">
+<h2>PDF Text Extractor — Análisis de estructura</h2>
+<input type="file" id="fileInput" accept=".pdf" style="margin:1rem 0;">
+<pre id="output" style="background:#0f0f23;padding:1rem;border-radius:8px;overflow:auto;max-height:80vh;font-size:12px;"></pre>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+document.getElementById('fileInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const pdf = await pdfjsLib.getDocument({data: new Uint8Array(bytes)}).promise;
+    const out = document.getElementById('output');
+    out.textContent = '';
+    
+    for (let p = 1; p <= pdf.numPages; p++) {
+        const page = await pdf.getPage(p);
+        const textContent = await page.getTextContent();
+        out.textContent += `\n════════ PÁGINA ${p} (${page.getViewport({scale:1}).width}x${page.getViewport({scale:1}).height}) ════════\n\n`;
+        
+        // Group by Y coordinate (rows)
+        const items = textContent.items.map(item => ({
+            text: item.str,
+            x: Math.round(item.transform[4]),
+            y: Math.round(item.transform[5]),
+            width: Math.round(item.width),
+            fontSize: Math.round(item.transform[0])
+        })).filter(i => i.text.trim());
+        
+        // Sort by Y descending (top to bottom), then X
+        items.sort((a, b) => b.y - a.y || a.x - b.x);
+        
+        // Group into rows (items within 3px Y are same row)
+        const rows = [];
+        let currentRow = [];
+        let currentY = items[0]?.y;
+        
+        for (const item of items) {
+            if (Math.abs(item.y - currentY) > 3) {
+                if (currentRow.length > 0) rows.push({y: currentY, items: currentRow});
+                currentRow = [];
+                currentY = item.y;
+            }
+            currentRow.push(item);
+        }
+        if (currentRow.length > 0) rows.push({y: currentY, items: currentRow});
+        
+        for (const row of rows) {
+            const texts = row.items.map(i => `[x=${i.x} w=${i.width}] "${i.text}"`).join('  |  ');
+            out.textContent += `Y=${row.y}  ${texts}\n`;
+        }
+        
+        // Also look for "Cajas" pattern
+        out.textContent += `\n── BÚSQUEDA DE PATRONES ──\n`;
+        const cajasItems = items.filter(i => /caja/i.test(i.text));
+        cajasItems.forEach(i => {
+            out.textContent += `  CAJAS encontrado: Y=${i.y} X=${i.x} "${i.text}"\n`;
+        });
+        
+        const totalItems = items.filter(i => /total/i.test(i.text));
+        totalItems.forEach(i => {
+            out.textContent += `  TOTAL encontrado: Y=${i.y} X=${i.x} "${i.text}"\n`;
+        });
+    }
+});
+</script></body></html>
