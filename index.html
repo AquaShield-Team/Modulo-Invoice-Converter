@@ -708,7 +708,7 @@
                                         <span className="mono text-tiny" style={{color:'var(--text-muted)'}}>Pág. {currentPage} de {totalPages}</span>
                                         <button disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => Math.min(totalPages, p+1))} style={{background:'none',border:'none',cursor:'pointer',color: currentPage >= totalPages ? 'var(--border-main)' : 'var(--text-primary)',padding:'2px'}}><ChevronRight /></button>
                                     </div>
-                                    <button onClick={() => { setPdfBytes(null); setFilesData([]); setOutputUrl(null); setProcessingTime(null); setTotalPages(1); setCurrentPage(1); }} style={{background:'none',border:'none',color:'var(--text-muted)',cursor:'pointer',fontSize:'0.65rem',fontFamily:'var(--font-mono)',textDecoration:'underline'}}>Cambiar</button>
+                                    <button onClick={() => { setPdfBytes(null); setFilesData([]); setOutputUrl(null); setProcessingTime(null); setTotalPages(1); setCurrentPage(1); }} style={{background:'none',border:'none',color:'var(--text-muted)',cursor:'pointer',fontSize:'0.65rem',fontFamily:'var(--font-mono)',textDecoration:'underline'}}>Limpiar</button>
                                 </div>
                                 <div ref={previewContainerRef} style={{flex:1,overflowY:'auto',padding:'1rem',minHeight:0}}>
                                     <div style={{display:'flex',justifyContent:'center'}}>
@@ -930,7 +930,7 @@
                             {/* Actions */}
                             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexShrink:0}}>
                                 <div style={{display:'flex',gap:'0.5rem'}}>
-                                    <button className="m-btn" onClick={() => {setMPdfBytes(null); setMProducts([]); setMFileName('');}}>↩ Cambiar PDF</button>
+                                    <button className="m-btn" onClick={() => {setMPdfBytes(null); setMProducts([]); setMFileName('');}}>↩ Limpiar</button>
                                     <button className="m-btn" onClick={resetMermas} disabled={!mHasChanges}>↺ Restaurar</button>
                                 </div>
                                 <div style={{display:'flex',gap:'0.5rem'}}>

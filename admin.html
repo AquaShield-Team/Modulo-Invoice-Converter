@@ -844,7 +844,7 @@
                                                 <input type="checkbox" checked={calibrationMode} onChange={e => setCalibrationMode(e.target.checked)} className="rounded" />
                                                 <span className="text-red-400 hover:text-red-300 transition-colors">Cajas Rojas</span>
                                             </label>
-                                            <button onClick={() => { setPdfBytes(null); setPreviewReady(false); setMultipleFiles([]); setOutputUrl(null); }} className="text-gray-500 hover:text-white text-xs underline transition-colors">Cambiar PDF</button>
+                                            <button onClick={() => { setPdfBytes(null); setPreviewReady(false); setMultipleFiles([]); setOutputUrl(null); }} className="text-gray-500 hover:text-white text-xs underline transition-colors">Limpiar</button>
                                         </div>
                                     </div>
                                     {/* PDF Preview via Canvas + Interactive Overlay */}
@@ -1064,7 +1064,7 @@
                                 {/* Actions */}
                                 <div className="flex justify-between items-center" style={{flexShrink:0}}>
                                     <div className="flex gap-2">
-                                        <button onClick={() => {setMPdfBytes(null); setMProducts([]); setMFileName('');}} className="flex items-center gap-1 bg-[#445563] hover:bg-[#4a5a68] text-white py-2 px-4 rounded-lg text-xs font-bold transition-all border border-[#4a5a68]">↩ Cambiar PDF</button>
+                                        <button onClick={() => {setMPdfBytes(null); setMProducts([]); setMFileName('');}} className="flex items-center gap-1 bg-[#445563] hover:bg-[#4a5a68] text-white py-2 px-4 rounded-lg text-xs font-bold transition-all border border-[#4a5a68]">↩ Limpiar</button>
                                         <button onClick={resetMermas} disabled={!mHasChanges} className="flex items-center gap-1 bg-[#445563] hover:bg-[#4a5a68] text-white py-2 px-4 rounded-lg text-xs font-bold transition-all border border-[#4a5a68] disabled:opacity-40">↺ Restaurar</button>
                                     </div>
                                     <div className="flex gap-2">
