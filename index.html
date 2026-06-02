@@ -859,7 +859,24 @@
 
                 {/* ═══ MERMAS MODULE ═══ */}
                 {activeModule === 'mermas' && (
-                <div style={{flex:1,display:'flex',overflow:'hidden',minHeight:0,padding:'1rem 1.5rem',gap:'1rem'}}>
+                <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden',minHeight:0}}>
+                    {/* Mermas profile selector bar */}
+                    <div style={{display:'flex',alignItems:'center',gap:'1rem',padding:'0.6rem 1.5rem',borderBottom:'1px solid var(--border-main)',flexShrink:0,background:'var(--bg-sidebar)'}}>
+                        <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
+                            <LayersIcon />
+                            <span className="text-tiny mono" style={{color:'var(--text-muted)',fontWeight:700,textTransform:'uppercase'}}>Plantilla</span>
+                        </div>
+                        <select
+                            value={profiles.activeId || ''}
+                            onChange={e => switchProfile(e.target.value)}
+                            style={{padding:'0.4rem 0.7rem',borderRadius:'8px',border:'1px solid var(--border-main)',background:'var(--bg-input)',color:'var(--text-primary)',fontFamily:'var(--font-heading)',fontWeight:600,fontSize:'0.8rem',cursor:'pointer',outline:'none',minWidth:'180px'}}
+                        >
+                            {profiles.profiles.map(p => (
+                                <option key={p.id} value={p.id}>{p.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div style={{flex:1,display:'flex',overflow:'hidden',minHeight:0,padding:'1rem 1.5rem',gap:'1rem'}}>
                     {!mPdfBytes ? (
                         /* Dropzone */
                         <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center'}}>
@@ -958,6 +975,7 @@
                         )}
                         </>
                     )}
+                </div>
                 </div>
                 )}
             </>
