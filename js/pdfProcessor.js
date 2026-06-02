@@ -57,8 +57,10 @@ window.AquaShieldPDF = (function () {
   // ── Operaciones por defecto para perfil "Factura Exportación" ──
   function getDefaultOperations() {
     return [
+      { id: crypto.randomUUID(), type: "rect", label: 'Elimina EMPRESAS AQUACHILE S.A.', x: 155, y: 892, width: 210, height: 24, color: "#FFFFFF" },
       { id: crypto.randomUUID(), type: "rect", label: 'Ocultar "FACTURA DE EXPORT..."', x: 380, y: 840, width: 190, height: 45, color: "#FFFFFF" },
       { id: crypto.randomUUID(), type: "rect", label: 'Ocultar "S.I.I. PTO MONTT"', x: 415, y: 800, width: 120, height: 12, color: "#FFFFFF" },
+      { id: crypto.randomUUID(), type: "text", label: "EMPRESAS AQUACHILE S.A.", text: "EMPRESAS AQUACHILE S.A.", x: 161, y: 901, size: 14, color: "#000000" },
       { id: crypto.randomUUID(), type: "text", label: "COMMERCIAL INVOICE", text: "COMMERCIAL INVOICE", x: 405, y: 860, size: 14, color: "#FF0000" },
       { id: crypto.randomUUID(), type: "rect", label: "Timbre Electrónico", x: 40, y: 20, width: 230, height: 125, color: "#FFFFFF" },
     ];
