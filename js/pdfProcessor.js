@@ -132,6 +132,9 @@ window.AquaShieldPDF = (function () {
     return data;
   }
 
+  // Flag to track if remote profiles have been loaded
+  let _remoteLoaded = false;
+
   function loadProfiles() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -143,8 +146,41 @@ window.AquaShieldPDF = (function () {
     return migrateToProfiles();
   }
 
+  // Async: fetch profiles.json (GitHub Pages) and store in localStorage
+  async function syncFromRemote() {
+    if (_remoteLoaded) return loadProfiles();
+    if (location.protocol === 'file:') { _remoteLoaded = true; return loadProfiles(); }
+    try {
+      const resp = await fetch('profiles.json?_t=' + Date.now());
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data && data.profiles && data.profiles.length > 0) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          _remoteLoaded = true;
+          return data;
+        }
+      }
+    } catch (e) {}
+    _remoteLoaded = true;
+    return loadProfiles();
+  }
+
   function saveProfiles(data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  // Export current profiles as downloadable profiles.json
+  function exportProfiles() {
+    const data = loadProfiles();
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'profiles.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    return json;
   }
 
   function getActiveProfile(data) {
@@ -331,6 +367,9 @@ window.AquaShieldPDF = (function () {
     createProfile,
     deleteProfile,
     renameProfile,
+    // Sync remoto (GitHub Pages)
+    syncFromRemote,
+    exportProfiles,
     // Compatibilidad
     loadOperations,
     saveOperations,

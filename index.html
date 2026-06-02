@@ -231,7 +231,8 @@
           useEffect(() => {
               pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
               window.AquaShieldPDF.init().then(() => {
-                  refreshProfiles();
+                  // En GitHub Pages, sincronizar desde profiles.json primero
+                  window.AquaShieldPDF.syncFromRemote().then(() => refreshProfiles());
               });
           }, []);
 
