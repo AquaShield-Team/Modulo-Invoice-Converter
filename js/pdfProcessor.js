@@ -170,10 +170,26 @@ window.AquaShieldPDF = (function () {
   }
 
   // Export current profiles as downloadable profiles.json
-  function exportProfiles() {
+  async function exportProfiles() {
     const data = loadProfiles();
     const json = JSON.stringify(data, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
+    // Intentar guardar directamente en la carpeta del proyecto
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: 'profiles.json',
+          types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }],
+        });
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        return json;
+      } catch (e) {
+        if (e.name === 'AbortError') return json; // Usuario canceló
+      }
+    }
+    // Fallback: descarga normal
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
