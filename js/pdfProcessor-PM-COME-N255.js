@@ -54,11 +54,23 @@ window.AquaShieldPDF = (function () {
     };
   }
 
-  // ── Operaciones por defecto para perfil "Factura Exportación" ──
+  // ── Operaciones por defecto para perfil "Factura Exportación" (AquaChile) ──
   function getDefaultOperations() {
     return [
+      { id: crypto.randomUUID(), type: "rect", label: 'Elimina EMPRESAS AQUACHILE S.A.', x: 155, y: 892, width: 210, height: 24, color: "#FFFFFF" },
       { id: crypto.randomUUID(), type: "rect", label: 'Ocultar "FACTURA DE EXPORT..."', x: 380, y: 840, width: 190, height: 45, color: "#FFFFFF" },
       { id: crypto.randomUUID(), type: "rect", label: 'Ocultar "S.I.I. PTO MONTT"', x: 415, y: 800, width: 120, height: 12, color: "#FFFFFF" },
+      { id: crypto.randomUUID(), type: "text", label: "EMPRESAS AQUACHILE S.A.", text: "EMPRESAS AQUACHILE S.A.", x: 161, y: 901, size: 14, color: "#000000" },
+      { id: crypto.randomUUID(), type: "text", label: "COMMERCIAL INVOICE", text: "COMMERCIAL INVOICE", x: 405, y: 860, size: 14, color: "#FF0000" },
+      { id: crypto.randomUUID(), type: "rect", label: "Timbre Electrónico", x: 40, y: 20, width: 230, height: 125, color: "#FFFFFF" },
+    ];
+  }
+
+  // ── Operaciones por defecto para perfil "Los Fiordos" ──
+  function getDefaultOperationsLosFiordos() {
+    return [
+      { id: crypto.randomUUID(), type: "rect", label: 'Ocultar "FACTURA DE EXPORT..."', x: 385, y: 840, width: 195, height: 40, color: "#FFFFFF" },
+      { id: crypto.randomUUID(), type: "rect", label: 'Ocultar "S.I.I. - RANCAGUA"', x: 425, y: 800, width: 110, height: 15, color: "#FFFFFF" },
       { id: crypto.randomUUID(), type: "text", label: "COMMERCIAL INVOICE", text: "COMMERCIAL INVOICE", x: 405, y: 860, size: 14, color: "#FF0000" },
       { id: crypto.randomUUID(), type: "rect", label: "Timbre Electrónico", x: 40, y: 20, width: 230, height: 125, color: "#FFFFFF" },
     ];
@@ -105,14 +117,23 @@ window.AquaShieldPDF = (function () {
       operations: existingOps || getDefaultOperations(),
     };
 
+    const losFiordosProfile = {
+      id: crypto.randomUUID(),
+      name: "Los Fiordos",
+      operations: getDefaultOperationsLosFiordos(),
+    };
+
     const data = {
       activeId: defaultProfile.id,
-      profiles: [defaultProfile],
+      profiles: [defaultProfile, losFiordosProfile],
     };
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     return data;
   }
+
+  // Flag to track if remote profiles have been loaded
+  let _remoteLoaded = false;
 
   function loadProfiles() {
     try {
@@ -125,8 +146,57 @@ window.AquaShieldPDF = (function () {
     return migrateToProfiles();
   }
 
+  // Async: fetch profiles.json (GitHub Pages) and store in localStorage
+  async function syncFromRemote() {
+    if (_remoteLoaded) return loadProfiles();
+    if (location.protocol === 'file:') { _remoteLoaded = true; return loadProfiles(); }
+    try {
+      const resp = await fetch('profiles.json?_t=' + Date.now());
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data && data.profiles && data.profiles.length > 0) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          _remoteLoaded = true;
+          return data;
+        }
+      }
+    } catch (e) {}
+    _remoteLoaded = true;
+    return loadProfiles();
+  }
+
   function saveProfiles(data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  // Export current profiles as downloadable profiles.json
+  async function exportProfiles() {
+    const data = loadProfiles();
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    // Intentar guardar directamente en la carpeta del proyecto
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: 'profiles.json',
+          types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }],
+        });
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        return json;
+      } catch (e) {
+        if (e.name === 'AbortError') return json; // Usuario canceló
+      }
+    }
+    // Fallback: descarga normal
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'profiles.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    return json;
   }
 
   function getActiveProfile(data) {
@@ -260,11 +330,9 @@ window.AquaShieldPDF = (function () {
     for (const fileData of filesData) {
       const pdfDoc = await PDFDocument.load(fileData.data);
       const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-      const pages = pdfDoc.getPages();
+      const firstPage = pdfDoc.getPages()[0];
 
-      for (const page of pages) {
-        await applyOperations(page, font, operations, { calibrationMode, showGrid });
-      }
+      await applyOperations(firstPage, font, operations, { calibrationMode, showGrid });
 
       const prefix = calibrationMode ? "PRUEBA_" : "Commercial_Invoice_";
       processedFiles.push({ name: prefix + fileData.name, bytes: await pdfDoc.save() });
@@ -315,6 +383,9 @@ window.AquaShieldPDF = (function () {
     createProfile,
     deleteProfile,
     renameProfile,
+    // Sync remoto (GitHub Pages)
+    syncFromRemote,
+    exportProfiles,
     // Compatibilidad
     loadOperations,
     saveOperations,

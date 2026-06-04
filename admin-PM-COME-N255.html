@@ -743,6 +743,9 @@
                             <button onClick={saveConfig} style={{display:'flex', alignItems:'center', gap:'0.5rem', background:'#445563', color:'white', padding:'0.5rem 1.2rem', borderRadius:'10px', border:'none', fontFamily:'Quicksand, sans-serif', fontWeight:700, fontSize:'0.8rem', cursor:'pointer', textTransform:'uppercase', letterSpacing:'1px', transition:'all 0.3s ease'}} onMouseEnter={e => {e.target.style.background='#EB5F0A'; e.target.style.transform='translateY(-2px)'; e.target.style.boxShadow='0 8px 20px rgba(235,95,10,0.25)';}} onMouseLeave={e => {e.target.style.background='#445563'; e.target.style.transform='translateY(0)'; e.target.style.boxShadow='none';}}>
                                 <SaveIcon size={14}/> <span>Guardar Config</span>
                             </button>
+                            <button onClick={() => { saveConfig(); window.AquaShieldPDF.exportProfiles(); }} style={{display:'flex', alignItems:'center', gap:'0.5rem', background:'#2d6a4f', color:'white', padding:'0.5rem 1.2rem', borderRadius:'10px', border:'none', fontFamily:'Quicksand, sans-serif', fontWeight:700, fontSize:'0.8rem', cursor:'pointer', textTransform:'uppercase', letterSpacing:'1px', transition:'all 0.3s ease'}} onMouseEnter={e => {e.target.style.background='#40916c'; e.target.style.transform='translateY(-2px)'; e.target.style.boxShadow='0 8px 20px rgba(64,145,108,0.25)';}} onMouseLeave={e => {e.target.style.background='#2d6a4f'; e.target.style.transform='translateY(0)'; e.target.style.boxShadow='none';}}>
+                                <span>📤 Exportar a Git</span>
+                            </button>
                             <div className="admin-user-profile">
                                 <span className="mono" style={{fontSize:'0.7rem', fontWeight:600, color:'#8fa0b0'}}>ADMIN Marcelo Ramírez</span>
                                 <div className="admin-avatar"><UserIcon size={16}/></div>
@@ -844,7 +847,7 @@
                                                 <input type="checkbox" checked={calibrationMode} onChange={e => setCalibrationMode(e.target.checked)} className="rounded" />
                                                 <span className="text-red-400 hover:text-red-300 transition-colors">Cajas Rojas</span>
                                             </label>
-                                            <button onClick={() => { setPdfBytes(null); setPreviewReady(false); setMultipleFiles([]); setOutputUrl(null); }} className="text-gray-500 hover:text-white text-xs underline transition-colors">Cambiar PDF</button>
+                                            <button onClick={() => { setPdfBytes(null); setPreviewReady(false); setMultipleFiles([]); setOutputUrl(null); }} className="text-gray-500 hover:text-white text-xs underline transition-colors">Limpiar</button>
                                         </div>
                                     </div>
                                     {/* PDF Preview via Canvas + Interactive Overlay */}
@@ -993,6 +996,24 @@
 
                     {/* ═══ MERMAS MODULE ═══ */}
                     {activeModule === 'mermas' && (
+                    <div className="flex-1 flex flex-col overflow-hidden min-h-0">
+                        {/* Mermas profile selector bar */}
+                        <div className="flex items-center gap-4 px-6 py-2 border-b border-[#3a4a58] bg-[#1a2533]" style={{flexShrink:0}}>
+                            <div className="flex items-center gap-2">
+                                <LayersIcon size={14}/>
+                                <span className="text-xs font-bold uppercase tracking-wider text-gray-500" style={{fontFamily:'Quicksand, sans-serif'}}>Plantilla</span>
+                            </div>
+                            <select
+                                value={profilesData.activeId || ''}
+                                onChange={e => switchProfile(e.target.value)}
+                                className="bg-[#2a3a4a] border border-[#4a5a68] text-white rounded-lg px-3 py-1.5 text-sm font-semibold cursor-pointer outline-none min-w-[180px]"
+                                style={{fontFamily:'Quicksand, sans-serif'}}
+                            >
+                                {profilesData.profiles.map(p => (
+                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                ))}
+                            </select>
+                        </div>
                     <div className="flex-1 flex overflow-hidden min-h-0" style={{padding:'1rem 1.5rem',gap:'1rem'}}>
                         {!mPdfBytes ? (
                             /* Dropzone */
@@ -1064,7 +1085,7 @@
                                 {/* Actions */}
                                 <div className="flex justify-between items-center" style={{flexShrink:0}}>
                                     <div className="flex gap-2">
-                                        <button onClick={() => {setMPdfBytes(null); setMProducts([]); setMFileName('');}} className="flex items-center gap-1 bg-[#445563] hover:bg-[#4a5a68] text-white py-2 px-4 rounded-lg text-xs font-bold transition-all border border-[#4a5a68]">↩ Cambiar PDF</button>
+                                        <button onClick={() => {setMPdfBytes(null); setMProducts([]); setMFileName('');}} className="flex items-center gap-1 bg-[#445563] hover:bg-[#4a5a68] text-white py-2 px-4 rounded-lg text-xs font-bold transition-all border border-[#4a5a68]">↩ Limpiar</button>
                                         <button onClick={resetMermas} disabled={!mHasChanges} className="flex items-center gap-1 bg-[#445563] hover:bg-[#4a5a68] text-white py-2 px-4 rounded-lg text-xs font-bold transition-all border border-[#4a5a68] disabled:opacity-40">↺ Restaurar</button>
                                     </div>
                                     <div className="flex gap-2">
@@ -1091,6 +1112,7 @@
                             )}
                             </>
                         )}
+                    </div>
                     </div>
                     )}
 

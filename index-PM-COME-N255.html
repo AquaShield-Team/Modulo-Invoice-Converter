@@ -231,7 +231,8 @@
           useEffect(() => {
               pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
               window.AquaShieldPDF.init().then(() => {
-                  refreshProfiles();
+                  // En GitHub Pages, sincronizar desde profiles.json primero
+                  window.AquaShieldPDF.syncFromRemote().then(() => refreshProfiles());
               });
           }, []);
 
@@ -442,7 +443,10 @@
                   currentRow.push(item);
               }
               if (currentRow.length > 0) rows.push({y: currentY, items: currentRow});
+
               const productRows = [];
+
+              // ── Formato 1: AquaChile (filas con "Caja" en el texto) ──
               for (let i = 0; i < rows.length; i++) {
                   const row = rows[i];
                   const cajasItem = row.items.find(it => /caja/i.test(it.text));
@@ -481,9 +485,60 @@
                       cajasItemCoords: { x: cajasItem.x, y: cajasItem.y, width: cajasItem.width, text: cajasItem.text, fontSize: cajasItem.fontSize },
                   });
               }
+
+              // ── Formato 2: Los Fiordos (sin "Caja", números directos en columna CAJAS) ──
+              if (productRows.length === 0) {
+                  // Buscar fila header con "CAJAS"
+                  let headerRowIdx = -1;
+                  for (let i = 0; i < rows.length; i++) {
+                      if (rows[i].items.some(it => /^CAJAS$/i.test(it.text))) {
+                          headerRowIdx = i;
+                          break;
+                      }
+                  }
+                  if (headerRowIdx >= 0) {
+                      // Saltar fila header + fila subheader (CASES/QUANTITY...)
+                      const startIdx = headerRowIdx + 2;
+                      for (let i = startIdx; i < rows.length; i++) {
+                          const row = rows[i];
+                          // Detener si llegamos a secciones no-producto
+                          if (row.items.some(it => /Peso\s*Neto|TOTALES|Certificamos|Timbre/i.test(it.text))) break;
+                          const sorted = [...row.items].sort((a, b) => a.x - b.x);
+                          // Buscar número de cajas en x < 80 (max 10 caracteres para evitar códigos de barras)
+                          const cajasItem = sorted.find(it => /^\d[\d.,]*$/.test(it.text) && it.x < 80 && it.text.length <= 10);
+                          if (!cajasItem) continue;
+                          const cajas = parseInt(cajasItem.text.replace(/\./g, '').replace(',', ''));
+                          if (cajas <= 0 || isNaN(cajas)) continue;
+                          // Buscar cantidad con KG/LB (obligatorio para producto válido)
+                          const qtyItem = sorted.find(it => /\d.*(KG|LB)$/i.test(it.text) && it.x >= 80 && it.x <= 150);
+                          if (!qtyItem) continue; // Si no tiene KG/LB, no es producto
+                          let quantity = 0, qtyUnit = 'KG';
+                          const um = qtyItem.text.match(/(KG|LB)$/i);
+                          qtyUnit = um ? um[1].toUpperCase() : 'KG';
+                          quantity = parseFloat(qtyItem.text.replace(/\s*(KG|LB)$/i, '').replace(/\./g, '').replace(',', '.'));
+                          // Buscar valor unitario (x entre 440 y 530)
+                          const unitItem = sorted.find(it => /^\d[\d.,]+$/.test(it.text) && it.x >= 440 && it.x <= 530);
+                          let unitValue = unitItem ? parseFloat(unitItem.text.replace(/\./g, '').replace(',', '.')) : 0;
+                          // Buscar total (x > 530)
+                          const totalItem = sorted.filter(it => /^\d[\d.,]+$/.test(it.text) && it.x > 530).pop();
+                          let total = totalItem ? parseFloat(totalItem.text.replace(/\./g, '').replace(',', '.')) : 0;
+                          const qtyPerBox = cajas > 0 ? quantity / cajas : 0;
+                          productRows.push({
+                              id: crypto.randomUUID(), code: '',
+                              originalCajas: cajas, newCajas: cajas, qtyPerBox: Math.round(qtyPerBox * 10000) / 10000,
+                              qtyUnit, unitValue, originalQuantity: quantity, originalTotal: total, cajasFormat: 'fiordos',
+                              qtyItem: qtyItem ? { x: qtyItem.x, y: qtyItem.y, width: qtyItem.width, fontSize: qtyItem.fontSize } : null,
+                              totalItem: totalItem ? { x: totalItem.x, y: totalItem.y, width: totalItem.width, fontSize: totalItem.fontSize } : null,
+                              cajasItemCoords: { x: cajasItem.x, y: cajasItem.y, width: cajasItem.width, text: cajasItem.text, fontSize: cajasItem.fontSize },
+                          });
+                      }
+                  }
+              }
+
+              // ── Grand Total ──
               let grandTotalY = 0, grandTotalValue = 0, grandTotalX = 540;
               for (const row of rows) {
-                  if (row.items.some(it => /TOTAL\s*(CIF|CPT|FOB|CFR)/i.test(it.text))) {
+                  if (row.items.some(it => /TOTAL\s*(CIF|CPT|FOB|CFR|FCA)/i.test(it.text))) {
                       const numItem = row.items.filter(it => /^\d[\d.,]+$/.test(it.text) && it.x > 480).pop();
                       if (numItem) { grandTotalValue = parseFloat(numItem.text.replace(/\./g, '').replace(',', '.')); grandTotalY = numItem.y; grandTotalX = numItem.x; }
                       break;
@@ -708,7 +763,7 @@
                                         <span className="mono text-tiny" style={{color:'var(--text-muted)'}}>Pág. {currentPage} de {totalPages}</span>
                                         <button disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => Math.min(totalPages, p+1))} style={{background:'none',border:'none',cursor:'pointer',color: currentPage >= totalPages ? 'var(--border-main)' : 'var(--text-primary)',padding:'2px'}}><ChevronRight /></button>
                                     </div>
-                                    <button onClick={() => { setPdfBytes(null); setFilesData([]); setOutputUrl(null); setProcessingTime(null); setTotalPages(1); setCurrentPage(1); }} style={{background:'none',border:'none',color:'var(--text-muted)',cursor:'pointer',fontSize:'0.65rem',fontFamily:'var(--font-mono)',textDecoration:'underline'}}>Cambiar</button>
+                                    <button onClick={() => { setPdfBytes(null); setFilesData([]); setOutputUrl(null); setProcessingTime(null); setTotalPages(1); setCurrentPage(1); }} style={{background:'none',border:'none',color:'var(--text-muted)',cursor:'pointer',fontSize:'0.65rem',fontFamily:'var(--font-mono)',textDecoration:'underline'}}>Limpiar</button>
                                 </div>
                                 <div ref={previewContainerRef} style={{flex:1,overflowY:'auto',padding:'1rem',minHeight:0}}>
                                     <div style={{display:'flex',justifyContent:'center'}}>
@@ -858,7 +913,24 @@
 
                 {/* ═══ MERMAS MODULE ═══ */}
                 {activeModule === 'mermas' && (
-                <div style={{flex:1,display:'flex',overflow:'hidden',minHeight:0,padding:'1rem 1.5rem',gap:'1rem'}}>
+                <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden',minHeight:0}}>
+                    {/* Mermas profile selector bar */}
+                    <div style={{display:'flex',alignItems:'center',gap:'1rem',padding:'0.6rem 1.5rem',borderBottom:'1px solid var(--border-main)',flexShrink:0,background:'var(--bg-sidebar)'}}>
+                        <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
+                            <LayersIcon />
+                            <span className="text-tiny mono" style={{color:'var(--text-muted)',fontWeight:700,textTransform:'uppercase'}}>Plantilla</span>
+                        </div>
+                        <select
+                            value={profiles.activeId || ''}
+                            onChange={e => switchProfile(e.target.value)}
+                            style={{padding:'0.4rem 0.7rem',borderRadius:'8px',border:'1px solid var(--border-main)',background:'var(--bg-input)',color:'var(--text-primary)',fontFamily:'var(--font-heading)',fontWeight:600,fontSize:'0.8rem',cursor:'pointer',outline:'none',minWidth:'180px'}}
+                        >
+                            {profiles.profiles.map(p => (
+                                <option key={p.id} value={p.id}>{p.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div style={{flex:1,display:'flex',overflow:'hidden',minHeight:0,padding:'1rem 1.5rem',gap:'1rem'}}>
                     {!mPdfBytes ? (
                         /* Dropzone */
                         <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center'}}>
@@ -930,7 +1002,7 @@
                             {/* Actions */}
                             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexShrink:0}}>
                                 <div style={{display:'flex',gap:'0.5rem'}}>
-                                    <button className="m-btn" onClick={() => {setMPdfBytes(null); setMProducts([]); setMFileName('');}}>↩ Cambiar PDF</button>
+                                    <button className="m-btn" onClick={() => {setMPdfBytes(null); setMProducts([]); setMFileName('');}}>↩ Limpiar</button>
                                     <button className="m-btn" onClick={resetMermas} disabled={!mHasChanges}>↺ Restaurar</button>
                                 </div>
                                 <div style={{display:'flex',gap:'0.5rem'}}>
@@ -957,6 +1029,7 @@
                         )}
                         </>
                     )}
+                </div>
                 </div>
                 )}
             </>
