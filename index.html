@@ -212,6 +212,7 @@
           const [mShowPreview, setMShowPreview] = useState(true);
           const [mPreviewScale, setMPreviewScale] = useState(1.2);
           const [activeModule, setActiveModule] = useState('invoice');
+          const [pastedImage, setPastedImage] = useState(null); // { data: base64, width, height }
 
           const mCanvasRef = useRef(null);
           const mFileInputRef = useRef(null);
@@ -380,8 +381,18 @@
                     if (total === 1) await new Promise(r => setTimeout(r, 200));
                     setFilesData(prev => prev.map((f, idx) => idx === i ? {...f, status: 'done'} : f));
                 }
+                // Inyectar imagen pegada como operación si existe
+                const finalOps = [...operations];
+                if (pastedImage) {
+                    finalOps.push({
+                        id: 'pasted-img', type: 'image', label: 'Imagen adjunta',
+                        x: pastedImage.x || 30, y: pastedImage.y || 155,
+                        width: pastedImage.w || 540, height: pastedImage.h || null,
+                        imageData: pastedImage.data,
+                    });
+                }
 
-                const result = await window.AquaShieldPDF.processFiles(filesData, operations);
+                const result = await window.AquaShieldPDF.processFiles(filesData, finalOps);
                 setOutputUrl(result.url);
                 setOutputName(result.name);
                 setIsZip(result.isZip);
@@ -836,6 +847,57 @@
 
                         {/* Actions */}
                         <div style={{padding:'1rem 1.2rem',borderTop:'1px solid var(--border-main)',display:'flex',flexDirection:'column',gap:'0.5rem',flexShrink:0,background:'var(--bg-sidebar)'}}>
+                            {/* Imagen adjunta */}
+                            <div style={{display:'flex',flexDirection:'column',gap:'0.4rem'}}>
+                                <span className="text-tiny mono" style={{color:'var(--text-muted)',fontWeight:700,textTransform:'uppercase'}}>📎 Imagen Adjunta</span>
+                                {!pastedImage ? (
+                                    <div
+                                        tabIndex={0}
+                                        style={{border:'1px dashed var(--border-main)',borderRadius:'8px',padding:'0.6rem',textAlign:'center',cursor:'pointer',fontSize:'0.7rem',color:'var(--text-muted)',fontFamily:'var(--font-mono)',transition:'var(--transition)',background:'var(--bg-input)'}}
+                                        onPaste={e => {
+                                            const items = e.clipboardData?.items;
+                                            if (!items) return;
+                                            for (const item of items) {
+                                                if (item.type.startsWith('image/')) {
+                                                    const file = item.getAsFile();
+                                                    const reader = new FileReader();
+                                                    reader.onload = ev => {
+                                                        const img = new Image();
+                                                        img.onload = () => setPastedImage({ data: ev.target.result, w: 540, h: null, x: 30, y: 155, naturalW: img.width, naturalH: img.height });
+                                                        img.src = ev.target.result;
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                    break;
+                                                }
+                                            }
+                                        }}
+                                        onClick={() => {
+                                            const input = document.createElement('input');
+                                            input.type = 'file'; input.accept = 'image/*';
+                                            input.onchange = e => {
+                                                const file = e.target.files[0]; if (!file) return;
+                                                const reader = new FileReader();
+                                                reader.onload = ev => {
+                                                    const img = new Image();
+                                                    img.onload = () => setPastedImage({ data: ev.target.result, w: 540, h: null, x: 30, y: 155, naturalW: img.width, naturalH: img.height });
+                                                    img.src = ev.target.result;
+                                                };
+                                                reader.readAsDataURL(file);
+                                            };
+                                            input.click();
+                                        }}
+                                        onMouseEnter={e => { e.target.style.borderColor='var(--accent)'; e.target.style.color='var(--accent)'; }}
+                                        onMouseLeave={e => { e.target.style.borderColor='var(--border-main)'; e.target.style.color='var(--text-muted)'; }}
+                                    >
+                                        Ctrl+V para pegar o clic para subir imagen
+                                    </div>
+                                ) : (
+                                    <div style={{position:'relative',borderRadius:'8px',overflow:'hidden',border:'1px solid var(--border-main)'}}>
+                                        <img src={pastedImage.data} style={{width:'100%',maxHeight:'80px',objectFit:'contain',background:'white',display:'block'}} />
+                                        <button onClick={() => setPastedImage(null)} style={{position:'absolute',top:'2px',right:'2px',background:'var(--danger)',color:'white',border:'none',borderRadius:'50%',width:'18px',height:'18px',fontSize:'10px',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1}}>✕</button>
+                                    </div>
+                                )}
+                            </div>
                             <button onClick={handleProcess} disabled={filesData.length === 0 || isProcessing} className="btn-primary" style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center',gap:'0.5rem',padding:'0.9rem'}}>
                                 {isProcessing ? (<><svg style={{animation:'spin 1s linear infinite',width:'16px',height:'16px'}} viewBox="0 0 24 24"><circle style={{opacity:0.25}} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path style={{opacity:0.75}} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg><span>Procesando...</span></>) : (<span>Generar Commercial Invoice</span>)}
                             </button>

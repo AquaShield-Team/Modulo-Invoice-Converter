@@ -191,7 +191,7 @@ window.AquaShieldPDF = (function () {
   }
 
   // ── Aplicar operaciones a una página de PDF ──────────────────
-  async function applyOperations(page, font, operations, options = {}) {
+  async function applyOperations(page, font, operations, options = {}, pdfDoc = null) {
     const { rgb } = window.PDFLib;
     const { calibrationMode = false, showGrid = false } = options;
     const { width, height } = page.getSize();
@@ -257,6 +257,28 @@ window.AquaShieldPDF = (function () {
             curY -= lineH;
           }
         }
+      } else if (op.type === "image" && op.imageData) {
+        try {
+          if (!pdfDoc) { console.warn('pdfDoc requerido para imagen'); continue; }
+          const imgBytes = Uint8Array.from(atob(op.imageData.split(',').pop()), c => c.charCodeAt(0));
+          let img;
+          if (op.imageData.includes('image/png')) {
+            img = await pdfDoc.embedPng(imgBytes);
+          } else {
+            img = await pdfDoc.embedJpg(imgBytes);
+          }
+          const iw = num(op.width || img.width);
+          const ih = num(op.height || img.height);
+          // Mantener aspect ratio si solo se especifica width
+          const scale = iw / img.width;
+          const finalH = op.height ? ih : img.height * scale;
+          page.drawImage(img, {
+            x: num(op.x),
+            y: num(op.y),
+            width: iw,
+            height: finalH,
+          });
+        } catch (e) { console.warn('Error embebiendo imagen:', e); }
       }
     }
   }
@@ -274,7 +296,7 @@ window.AquaShieldPDF = (function () {
       const pages = pdfDoc.getPages();
 
       for (const page of pages) {
-        await applyOperations(page, font, operations, { calibrationMode, showGrid });
+        await applyOperations(page, font, operations, { calibrationMode, showGrid }, pdfDoc);
       }
 
       const prefix = calibrationMode ? "PRUEBA_" : "Commercial_Invoice_";
@@ -306,7 +328,7 @@ window.AquaShieldPDF = (function () {
     const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
     const firstPage = pdfDoc.getPages()[0];
 
-    await applyOperations(firstPage, font, operations, options);
+    await applyOperations(firstPage, font, operations, options, pdfDoc);
 
     const modifiedBytes = await pdfDoc.save();
     return URL.createObjectURL(new Blob([modifiedBytes], { type: "application/pdf" }));
