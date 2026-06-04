@@ -823,7 +823,7 @@
                                     <div
                                         tabIndex={0}
                                         className="notes-textarea"
-                                        style={{minHeight:'80px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'var(--text-muted)',fontSize:'0.75rem',fontFamily:'var(--font-mono)',textAlign:'center',lineHeight:1.5}}
+                                        style={{minHeight:'80px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'text',color:'var(--text-muted)',fontSize:'0.75rem',fontFamily:'var(--font-mono)',textAlign:'center',lineHeight:1.5}}
                                         onPaste={e => {
                                             const items = e.clipboardData?.items;
                                             if (!items) return;
@@ -842,23 +842,8 @@
                                                 }
                                             }
                                         }}
-                                        onClick={() => {
-                                            const input = document.createElement('input');
-                                            input.type = 'file'; input.accept = 'image/*';
-                                            input.onchange = e => {
-                                                const file = e.target.files[0]; if (!file) return;
-                                                const reader = new FileReader();
-                                                reader.onload = ev => {
-                                                    const img = new Image();
-                                                    img.onload = () => setPastedImage({ data: ev.target.result, w: 540, h: null, x: 30, y: 155, naturalW: img.width, naturalH: img.height });
-                                                    img.src = ev.target.result;
-                                                };
-                                                reader.readAsDataURL(file);
-                                            };
-                                            input.click();
-                                        }}
                                     >
-                                        Ctrl+V para pegar imagen<br/>o clic para subir archivo
+                                        Clic aquí y Ctrl+V para pegar imagen
                                     </div>
                                 ) : (
                                     <div style={{position:'relative',borderRadius:'8px',overflow:'hidden',border:'1px solid var(--border-main)',background:'white'}}>
