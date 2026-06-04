@@ -60,7 +60,7 @@ window.AquaShieldPDF = (function () {
       { id: crypto.randomUUID(), type: "rect", label: 'Ocultar "FACTURA DE EXPORT..."', x: 380, y: 840, width: 190, height: 45, color: "#FFFFFF" },
       { id: crypto.randomUUID(), type: "rect", label: 'Ocultar "S.I.I. PTO MONTT"', x: 415, y: 800, width: 120, height: 12, color: "#FFFFFF" },
       { id: crypto.randomUUID(), type: "text", label: "COMMERCIAL INVOICE", text: "COMMERCIAL INVOICE", x: 405, y: 860, size: 14, color: "#FF0000" },
-      { id: crypto.randomUUID(), type: "rect", label: "Timbre Electrónico", x: 40, y: 20, width: 230, height: 125, color: "#FFFFFF" },
+      { id: crypto.randomUUID(), type: "notes", label: "Notas", x: 40, y: 20, width: 230, height: 125, color: "#000000", borderColor: "#000000", bgColor: "#FFFFFF" },
     ];
   }
 
@@ -231,20 +231,31 @@ window.AquaShieldPDF = (function () {
           color: rgb(c.r, c.g, c.b),
         });
       } else if (op.type === "notes") {
-        const c = calibrationMode ? { r: 0, g: 0.4, b: 0 } : hexToRgb(op.color || "#000000");
-        const fontSize = num(op.size || 10);
-        const lineH = num(op.lineHeight || fontSize * 1.5);
-        const lines = (op.text || "").split("\n");
-        let currentY = num(op.y) + num(op.height || 80) - fontSize;
-        for (let i = 0; i < lines.length; i++) {
-          page.drawText(lines[i], {
-            x: num(op.x),
-            y: currentY,
-            size: fontSize,
-            font: font,
-            color: rgb(c.r, c.g, c.b),
-          });
-          currentY -= lineH;
+        const bx = num(op.x), by = num(op.y), bw = num(op.width || 230), bh = num(op.height || 125);
+        const borderC = calibrationMode ? { r: 0, g: 0.4, b: 0 } : hexToRgb(op.borderColor || "#000000");
+        const bgC = hexToRgb(op.bgColor || "#FFFFFF");
+        const textC = calibrationMode ? { r: 0, g: 0.4, b: 0 } : hexToRgb(op.color || "#000000");
+        const titleSize = num(op.titleSize || 9);
+        const contentSize = num(op.size || 8);
+        // Fondo blanco
+        page.drawRectangle({ x: bx, y: by, width: bw, height: bh, color: rgb(bgC.r, bgC.g, bgC.b), opacity: calibrationMode ? 0.3 : 1 });
+        // Borde del recuadro
+        page.drawRectangle({ x: bx, y: by, width: bw, height: bh, borderColor: rgb(borderC.r, borderC.g, borderC.b), borderWidth: 0.8, color: rgb(1, 1, 1), opacity: 0 });
+        // Título "Notas"
+        const title = op.label || "Notas";
+        page.drawText(title, { x: bx + 4, y: by + bh - titleSize - 3, size: titleSize, font: font, color: rgb(textC.r, textC.g, textC.b) });
+        // Línea separadora bajo título
+        page.drawLine({ start: { x: bx, y: by + bh - titleSize - 7 }, end: { x: bx + bw, y: by + bh - titleSize - 7 }, color: rgb(borderC.r, borderC.g, borderC.b), thickness: 0.5 });
+        // Contenido de texto (multi-línea)
+        if (op.text) {
+          const lineH = num(op.lineHeight || contentSize * 1.5);
+          const lines = op.text.split("\n");
+          let curY = by + bh - titleSize - 10 - contentSize;
+          for (const line of lines) {
+            if (curY < by + 4) break;
+            page.drawText(line, { x: bx + 4, y: curY, size: contentSize, font: font, color: rgb(textC.r, textC.g, textC.b) });
+            curY -= lineH;
+          }
         }
       }
     }

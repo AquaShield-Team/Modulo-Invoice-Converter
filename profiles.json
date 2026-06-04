@@ -57,13 +57,15 @@
         },
         {
           "id": "f532632e-de86-4f72-bed6-0ae39bdbf8fb",
-          "type": "rect",
-          "label": "Timbre Electrónico",
+          "type": "notes",
+          "label": "Notas",
           "x": 40,
           "y": 20,
           "width": 230,
           "height": 125,
-          "color": "#FFFFFF"
+          "color": "#000000",
+          "borderColor": "#000000",
+          "bgColor": "#FFFFFF"
         }
       ]
     },
@@ -103,13 +105,15 @@
         },
         {
           "id": "5131557b-e3f5-46e3-80c1-077731988ace",
-          "type": "rect",
-          "label": "Timbre Electrónico",
+          "type": "notes",
+          "label": "Notas",
           "x": 40,
           "y": 20,
           "width": 230,
           "height": 125,
-          "color": "#FFFFFF"
+          "color": "#000000",
+          "borderColor": "#000000",
+          "bgColor": "#FFFFFF"
         }
       ]
     }
