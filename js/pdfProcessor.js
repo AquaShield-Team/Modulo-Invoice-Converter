@@ -231,6 +231,8 @@ window.AquaShieldPDF = (function () {
           color: rgb(c.r, c.g, c.b),
         });
       } else if (op.type === "notes") {
+        // No dibujar el recuadro de notas si no hay texto
+        if (!op.text || !op.text.trim()) continue;
         const bx = num(op.x), by = num(op.y), bw = num(op.width || 230), bh = num(op.height || 125);
         const borderC = calibrationMode ? { r: 0, g: 0.4, b: 0 } : hexToRgb(op.borderColor || "#000000");
         const bgC = hexToRgb(op.bgColor || "#FFFFFF");

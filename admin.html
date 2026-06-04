@@ -508,13 +508,6 @@
                 }
             }, []);
 
-            // Listener global: Ctrl+V pega imagen desde cualquier parte del admin
-            useEffect(() => {
-                if (activeModule !== 'invoice') return;
-                document.addEventListener('paste', pasteImage);
-                return () => document.removeEventListener('paste', pasteImage);
-            }, [activeModule, pasteImage]);
-
             const removeOp = (id) => {
                 setOperations(prev => prev.filter(op => op.id !== id));
             };
