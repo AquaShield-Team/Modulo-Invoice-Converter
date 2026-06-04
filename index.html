@@ -812,6 +812,62 @@
                                 </div>
                             )}
 
+                            {/* Image Paste Section */}
+                            <div style={{borderTop:'1px solid var(--border-main)',paddingTop:'0.8rem'}}>
+                                <div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginBottom:'0.5rem'}}>
+                                    <span style={{fontSize:'0.8rem'}}>📎</span>
+                                    <span style={{fontFamily:'var(--font-heading)',fontWeight:700,fontSize:'0.85rem'}}>Imagen Adjunta</span>
+                                </div>
+                                <p className="text-tiny" style={{color:'var(--text-muted)',marginTop:'3px',marginBottom:'0.5rem'}}>Se incrusta en la parte inferior del PDF</p>
+                                {!pastedImage ? (
+                                    <div
+                                        tabIndex={0}
+                                        className="notes-textarea"
+                                        style={{minHeight:'80px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',color:'var(--text-muted)',fontSize:'0.75rem',fontFamily:'var(--font-mono)',textAlign:'center',lineHeight:1.5}}
+                                        onPaste={e => {
+                                            const items = e.clipboardData?.items;
+                                            if (!items) return;
+                                            for (const item of items) {
+                                                if (item.type.startsWith('image/')) {
+                                                    e.preventDefault();
+                                                    const file = item.getAsFile();
+                                                    const reader = new FileReader();
+                                                    reader.onload = ev => {
+                                                        const img = new Image();
+                                                        img.onload = () => setPastedImage({ data: ev.target.result, w: 540, h: null, x: 30, y: 155, naturalW: img.width, naturalH: img.height });
+                                                        img.src = ev.target.result;
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                    break;
+                                                }
+                                            }
+                                        }}
+                                        onClick={() => {
+                                            const input = document.createElement('input');
+                                            input.type = 'file'; input.accept = 'image/*';
+                                            input.onchange = e => {
+                                                const file = e.target.files[0]; if (!file) return;
+                                                const reader = new FileReader();
+                                                reader.onload = ev => {
+                                                    const img = new Image();
+                                                    img.onload = () => setPastedImage({ data: ev.target.result, w: 540, h: null, x: 30, y: 155, naturalW: img.width, naturalH: img.height });
+                                                    img.src = ev.target.result;
+                                                };
+                                                reader.readAsDataURL(file);
+                                            };
+                                            input.click();
+                                        }}
+                                    >
+                                        Ctrl+V para pegar imagen<br/>o clic para subir archivo
+                                    </div>
+                                ) : (
+                                    <div style={{position:'relative',borderRadius:'8px',overflow:'hidden',border:'1px solid var(--border-main)',background:'white'}}>
+                                        <img src={pastedImage.data} style={{width:'100%',maxHeight:'120px',objectFit:'contain',display:'block',padding:'4px'}} />
+                                        <button onClick={() => setPastedImage(null)} style={{position:'absolute',top:'4px',right:'4px',background:'var(--danger)',color:'white',border:'none',borderRadius:'50%',width:'20px',height:'20px',fontSize:'11px',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1,boxShadow:'0 2px 4px rgba(0,0,0,0.3)'}}>✕</button>
+                                    </div>
+                                )}
+                            </div>
+
                             {/* History */}
                             {history.length > 0 && (
                                 <div style={{borderTop:'1px solid var(--border-main)',paddingTop:'0.8rem'}}>
@@ -847,57 +903,6 @@
 
                         {/* Actions */}
                         <div style={{padding:'1rem 1.2rem',borderTop:'1px solid var(--border-main)',display:'flex',flexDirection:'column',gap:'0.5rem',flexShrink:0,background:'var(--bg-sidebar)'}}>
-                            {/* Imagen adjunta */}
-                            <div style={{display:'flex',flexDirection:'column',gap:'0.4rem'}}>
-                                <span className="text-tiny mono" style={{color:'var(--text-muted)',fontWeight:700,textTransform:'uppercase'}}>📎 Imagen Adjunta</span>
-                                {!pastedImage ? (
-                                    <div
-                                        tabIndex={0}
-                                        style={{border:'1px dashed var(--border-main)',borderRadius:'8px',padding:'0.6rem',textAlign:'center',cursor:'pointer',fontSize:'0.7rem',color:'var(--text-muted)',fontFamily:'var(--font-mono)',transition:'var(--transition)',background:'var(--bg-input)'}}
-                                        onPaste={e => {
-                                            const items = e.clipboardData?.items;
-                                            if (!items) return;
-                                            for (const item of items) {
-                                                if (item.type.startsWith('image/')) {
-                                                    const file = item.getAsFile();
-                                                    const reader = new FileReader();
-                                                    reader.onload = ev => {
-                                                        const img = new Image();
-                                                        img.onload = () => setPastedImage({ data: ev.target.result, w: 540, h: null, x: 30, y: 155, naturalW: img.width, naturalH: img.height });
-                                                        img.src = ev.target.result;
-                                                    };
-                                                    reader.readAsDataURL(file);
-                                                    break;
-                                                }
-                                            }
-                                        }}
-                                        onClick={() => {
-                                            const input = document.createElement('input');
-                                            input.type = 'file'; input.accept = 'image/*';
-                                            input.onchange = e => {
-                                                const file = e.target.files[0]; if (!file) return;
-                                                const reader = new FileReader();
-                                                reader.onload = ev => {
-                                                    const img = new Image();
-                                                    img.onload = () => setPastedImage({ data: ev.target.result, w: 540, h: null, x: 30, y: 155, naturalW: img.width, naturalH: img.height });
-                                                    img.src = ev.target.result;
-                                                };
-                                                reader.readAsDataURL(file);
-                                            };
-                                            input.click();
-                                        }}
-                                        onMouseEnter={e => { e.target.style.borderColor='var(--accent)'; e.target.style.color='var(--accent)'; }}
-                                        onMouseLeave={e => { e.target.style.borderColor='var(--border-main)'; e.target.style.color='var(--text-muted)'; }}
-                                    >
-                                        Ctrl+V para pegar o clic para subir imagen
-                                    </div>
-                                ) : (
-                                    <div style={{position:'relative',borderRadius:'8px',overflow:'hidden',border:'1px solid var(--border-main)'}}>
-                                        <img src={pastedImage.data} style={{width:'100%',maxHeight:'80px',objectFit:'contain',background:'white',display:'block'}} />
-                                        <button onClick={() => setPastedImage(null)} style={{position:'absolute',top:'2px',right:'2px',background:'var(--danger)',color:'white',border:'none',borderRadius:'50%',width:'18px',height:'18px',fontSize:'10px',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1}}>✕</button>
-                                    </div>
-                                )}
-                            </div>
                             <button onClick={handleProcess} disabled={filesData.length === 0 || isProcessing} className="btn-primary" style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'center',gap:'0.5rem',padding:'0.9rem'}}>
                                 {isProcessing ? (<><svg style={{animation:'spin 1s linear infinite',width:'16px',height:'16px'}} viewBox="0 0 24 24"><circle style={{opacity:0.25}} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path style={{opacity:0.75}} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg><span>Procesando...</span></>) : (<span>Generar Commercial Invoice</span>)}
                             </button>
