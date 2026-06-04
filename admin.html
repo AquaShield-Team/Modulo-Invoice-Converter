@@ -456,6 +456,58 @@
                 }]);
             };
 
+            const addImage = () => {
+                const input = document.createElement('input');
+                input.type = 'file'; input.accept = 'image/*';
+                input.onchange = e => {
+                    const file = e.target.files[0]; if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = ev => {
+                        const img = new window.Image();
+                        img.onload = () => {
+                            // Escalar a max 540px ancho manteniendo ratio
+                            const maxW = 540;
+                            const scale = Math.min(maxW / img.width, 1);
+                            setOperations(prev => [...prev, {
+                                id: crypto.randomUUID(), type: 'image', label: 'Imagen Adjunta',
+                                x: 30, y: 155, width: Math.round(img.width * scale), height: Math.round(img.height * scale),
+                                imageData: ev.target.result,
+                            }]);
+                        };
+                        img.src = ev.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                };
+                input.click();
+            };
+
+            const pasteImage = (e) => {
+                const items = e.clipboardData?.items;
+                if (!items) return;
+                for (const item of items) {
+                    if (item.type.startsWith('image/')) {
+                        e.preventDefault();
+                        const file = item.getAsFile();
+                        const reader = new FileReader();
+                        reader.onload = ev => {
+                            const img = new window.Image();
+                            img.onload = () => {
+                                const maxW = 540;
+                                const scale = Math.min(maxW / img.width, 1);
+                                setOperations(prev => [...prev, {
+                                    id: crypto.randomUUID(), type: 'image', label: 'Imagen Adjunta',
+                                    x: 30, y: 155, width: Math.round(img.width * scale), height: Math.round(img.height * scale),
+                                    imageData: ev.target.result,
+                                }]);
+                            };
+                            img.src = ev.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                        break;
+                    }
+                }
+            };
+
             const removeOp = (id) => {
                 setOperations(prev => prev.filter(op => op.id !== id));
             };
@@ -959,6 +1011,18 @@
                                         <PlusIcon size={12}/> <span>Notas</span>
                                     </button>
                                 </div>
+                                <div className="flex space-x-2 mt-2">
+                                    <button onClick={addImage} className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#4a5a68] text-green-300 py-2.5 rounded-lg text-xs font-bold transition-all border border-[#4a5a68] hover:border-green-400/50">
+                                        <PlusIcon size={12}/> <span>📎 Imagen</span>
+                                    </button>
+                                    <div
+                                        tabIndex={0}
+                                        onPaste={pasteImage}
+                                        className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#4a5a68] text-green-300/60 py-2.5 rounded-lg text-xs font-bold transition-all border border-dashed border-[#4a5a68] hover:border-green-400/50 cursor-text outline-none focus:border-green-400"
+                                    >
+                                        <span>Ctrl+V pegar</span>
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Lista de capas */}
@@ -1103,7 +1167,8 @@
             const [collapsed, setCollapsed] = useState(false);
             const isRect = op.type === 'rect';
             const isNotes = op.type === 'notes';
-            const dotColor = isRect ? 'bg-red-400' : (isNotes ? 'bg-amber-400' : 'bg-emerald-400');
+            const isImage = op.type === 'image';
+            const dotColor = isImage ? 'bg-green-400' : (isRect ? 'bg-red-400' : (isNotes ? 'bg-amber-400' : 'bg-emerald-400'));
 
             return (
                 <div className="layer-card bg-[#3a4a58] rounded-lg border border-[#4a5a68] overflow-hidden hover:border-[#5a6a78] transition-colors">
@@ -1131,8 +1196,16 @@
                     {/* Propiedades */}
                     {!collapsed && (
                         <div className="px-3 py-3 space-y-3">
-                            {/* Contenido: input para texto, textarea para notas */}
-                            {!isRect && (
+                            {/* Contenido: input para texto, textarea para notas, preview para imagen */}
+                            {isImage && op.imageData && (
+                                <div>
+                                    <span className="text-[10px] text-gray-500 uppercase font-bold block mb-1">Vista previa</span>
+                                    <div style={{borderRadius:'6px',overflow:'hidden',border:'1px solid #4a5a68',background:'white',position:'relative'}}>
+                                        <img src={op.imageData} style={{width:'100%',maxHeight:'80px',objectFit:'contain',display:'block',padding:'3px'}} />
+                                    </div>
+                                </div>
+                            )}
+                            {!isRect && !isImage && (
                                 <div>
                                     <span className="text-[10px] text-gray-500 uppercase font-bold block mb-1">{isNotes ? 'Notas (una línea por Enter)' : 'Contenido'}</span>
                                     {isNotes ? (
