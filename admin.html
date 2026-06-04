@@ -1280,12 +1280,14 @@
                                 </div>
                             )}
 
-                            {/* Color */}
+                            {/* Color (no para imágenes) */}
+                            {!isImage && (
                             <div className="flex items-center space-x-3">
                                 <span className="text-[10px] text-gray-500 uppercase font-bold">Color</span>
                                 <input type="color" value={op.color || (isRect ? '#FFFFFF' : isNotes ? '#000000' : '#FF0000')} onChange={e => onUpdate(op.id, 'color', e.target.value)} className="dark-input-color" />
                                 <span className="text-xs text-gray-600 font-mono">{op.color || (isRect ? '#FFFFFF' : isNotes ? '#000000' : '#FF0000')}</span>
                             </div>
+                            )}
                         </div>
                     )}
                 </div>
