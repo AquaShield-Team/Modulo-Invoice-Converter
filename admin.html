@@ -909,9 +909,10 @@
                                                 const rect = getScreenRect(op);
                                                 const isSelected = op.id === selectedOpId;
                                                 const isRect = op.type === 'rect';
-                                                const borderColor = isSelected ? '#EB5F0A' : (isRect ? '#E53E3E' : (op.type === 'notes' ? '#D69E2E' : '#38A169'));
-                                                const bgColor = isRect ? 'rgba(255, 80, 80, 0.25)' : (op.type === 'notes' ? 'rgba(214, 158, 46, 0.2)' : 'rgba(56, 161, 105, 0.25)');
-                                                const bgSelected = isRect ? 'rgba(255, 80, 80, 0.4)' : (op.type === 'notes' ? 'rgba(214, 158, 46, 0.35)' : 'rgba(56, 161, 105, 0.4)');
+                                                const isImg = op.type === 'image';
+                                                const borderColor = isSelected ? '#EB5F0A' : (isImg ? '#9333EA' : (isRect ? '#E53E3E' : (op.type === 'notes' ? '#D69E2E' : '#38A169')));
+                                                const bgColor = isImg ? 'rgba(147, 51, 234, 0.25)' : (isRect ? 'rgba(255, 80, 80, 0.25)' : (op.type === 'notes' ? 'rgba(214, 158, 46, 0.2)' : 'rgba(56, 161, 105, 0.25)'));
+                                                const bgSelected = isImg ? 'rgba(147, 51, 234, 0.4)' : (isRect ? 'rgba(255, 80, 80, 0.4)' : (op.type === 'notes' ? 'rgba(214, 158, 46, 0.35)' : 'rgba(56, 161, 105, 0.4)'));
                                                 const handleSize = 8;
                                                 return (
                                                     <div key={op.id}>
@@ -1015,7 +1016,7 @@
                                     <div
                                         tabIndex={0}
                                         onPaste={pasteImage}
-                                        className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#4a5a68] text-green-300 py-2.5 rounded-lg text-xs font-bold transition-all border border-dashed border-[#4a5a68] hover:border-green-400/50 cursor-text outline-none focus:border-green-400"
+                                        className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#4a5a68] text-purple-300 py-2.5 rounded-lg text-xs font-bold transition-all border border-dashed border-[#4a5a68] hover:border-purple-400/50 cursor-text outline-none focus:border-purple-400"
                                     >
                                         <PlusIcon size={12}/> <span>📎 Ctrl+V pegar imagen</span>
                                     </div>
@@ -1165,7 +1166,7 @@
             const isRect = op.type === 'rect';
             const isNotes = op.type === 'notes';
             const isImage = op.type === 'image';
-            const dotColor = isImage ? 'bg-green-400' : (isRect ? 'bg-red-400' : (isNotes ? 'bg-amber-400' : 'bg-emerald-400'));
+            const dotColor = isImage ? 'bg-purple-400' : (isRect ? 'bg-red-400' : (isNotes ? 'bg-amber-400' : 'bg-emerald-400'));
 
             return (
                 <div className="layer-card bg-[#3a4a58] rounded-lg border border-[#4a5a68] overflow-hidden hover:border-[#5a6a78] transition-colors">
