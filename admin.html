@@ -387,7 +387,7 @@
 
             // Helper to get screen rect for an operation
             const getScreenRect = (op) => {
-                if (op.type === 'rect') {
+                if (op.type === 'rect' || op.type === 'image') {
                     return {
                         left: pdfToScreenX(op.x),
                         top: pdfToScreenY(n(op.y) + n(op.height)),
@@ -949,7 +949,7 @@
                                                             }}>{op.label}</span>
                                                         </div>
                                                         {/* Resize handles (rects y notas seleccionados) */}
-                                                        {isSelected && (isRect || op.type === 'notes') && ['tl','tr','bl','br','r','b'].map(corner => {
+                                                        {isSelected && (isRect || op.type === 'notes' || op.type === 'image') && ['tl','tr','bl','br','r','b'].map(corner => {
                                                             let hLeft, hTop, cursor;
                                                             if (corner === 'tl') { hLeft = rect.left - handleSize/2; hTop = rect.top - handleSize/2; cursor = 'nwse-resize'; }
                                                             else if (corner === 'tr') { hLeft = rect.left + rect.width - handleSize/2; hTop = rect.top - handleSize/2; cursor = 'nesw-resize'; }
