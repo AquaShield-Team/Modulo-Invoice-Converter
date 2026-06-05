@@ -127,18 +127,34 @@ window.AquaShieldPDF = (function () {
 
   async function syncFromRemote() {
     try {
-      const existing = localStorage.getItem(STORAGE_KEY);
-      if (existing) {
-        const data = JSON.parse(existing);
-        if (data && data.profiles && data.profiles.length > 0) return data;
-      }
       const res = await fetch('profiles.json?t=' + Date.now());
       if (!res.ok) return loadProfiles();
       const remote = await res.json();
-      if (remote && remote.profiles && remote.profiles.length > 0) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
-        return remote;
+      if (!remote || !remote.profiles || remote.profiles.length === 0) return loadProfiles();
+
+      // Merge: use remote operations structure but preserve user's note text
+      const existing = localStorage.getItem(STORAGE_KEY);
+      let localData = null;
+      try { localData = existing ? JSON.parse(existing) : null; } catch(e) {}
+
+      for (const rProfile of remote.profiles) {
+        const lProfile = localData?.profiles?.find(p => p.id === rProfile.id);
+        if (lProfile) {
+          // Preserve user's note text from localStorage
+          for (const rOp of rProfile.operations) {
+            if (rOp.type === 'notes') {
+              const lOp = lProfile.operations.find(o => o.id === rOp.id);
+              if (lOp && lOp.text) rOp.text = lOp.text;
+            }
+          }
+        }
       }
+
+      // Keep activeId from local if it exists
+      if (localData?.activeId) remote.activeId = localData.activeId;
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
+      return remote;
     } catch (e) { console.warn('syncFromRemote:', e); }
     return loadProfiles();
   }
