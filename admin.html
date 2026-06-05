@@ -1194,15 +1194,7 @@
                     {/* Propiedades */}
                     {!collapsed && (
                         <div className="px-3 py-3 space-y-3">
-                            {/* Contenido: input para texto, textarea para notas, preview para imagen */}
-                            {isImage && op.imageData && (
-                                <div>
-                                    <span className="text-[10px] text-gray-500 uppercase font-bold block mb-1">Vista previa</span>
-                                    <div style={{borderRadius:'6px',overflow:'hidden',border:'1px solid #4a5a68',background:'white',position:'relative'}}>
-                                        <img src={op.imageData} style={{width:'100%',maxHeight:'80px',objectFit:'contain',display:'block',padding:'3px'}} />
-                                    </div>
-                                </div>
-                            )}
+                            {/* Contenido: input para texto, textarea para notas */}
                             {!isRect && !isImage && (
                                 <div>
                                     <span className="text-[10px] text-gray-500 uppercase font-bold block mb-1">{isNotes ? 'Notas (una línea por Enter)' : 'Contenido'}</span>
