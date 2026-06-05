@@ -81,7 +81,7 @@
 
         /* Toast */
         #toast-container{position:fixed;bottom:2rem;right:2rem;display:flex;flex-direction:column;gap:0.6rem;z-index:9999;pointer-events:none;}
-        .toast{pointer-events:auto;background:rgba(58,74,88,0.95);border:1px solid #4a5a68;border-left:4px solid #EB5F0A;padding:0.8rem 1.2rem;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.3);animation:toastIn 0.35s ease-out;font-size:0.8rem;font-family:'Inter',sans-serif;color:#f8fafc;display:flex;align-items:center;gap:0.6rem;max-width:380px;}}
+        .toast{pointer-events:auto;background:rgba(58,74,88,0.95);border:1px solid #4a5a68;border-left:4px solid #EB5F0A;padding:0.8rem 1.2rem;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.3);animation:toastIn 0.35s ease-out;font-size:0.8rem;font-family:'Inter',sans-serif;color:#f8fafc;display:flex;align-items:center;gap:0.6rem;max-width:380px;}
         .toast.toast-success{border-left-color:#10b981;}
         .toast.toast-error{border-left-color:#ff6b6b;}
         .toast.toast-warning{border-left-color:#fbbf24;}
@@ -93,7 +93,7 @@
         .theme-toggle-btn{width:36px;height:36px;background:#445563;border:none;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;cursor:pointer;transition:all 0.3s ease;}
         .theme-toggle-btn:hover{background:#EB5F0A;}
         .admin-avatar{width:36px;height:36px;background:#445563;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;}
-        .admin-user-profile{display:flex;align-items:center;gap:0.6rem;padding-left:1rem;border-left:1px solid #4a5a68;height:24px;}}
+        .admin-user-profile{display:flex;align-items:center;gap:0.6rem;padding-left:1rem;border-left:1px solid #4a5a68;height:24px;}
 
         /* Module tabs */
         .module-tabs{display:flex;gap:0;background:#2d3a45;border-bottom:1px solid #4a5a68;flex-shrink:0;padding:0 1.5rem;}
@@ -707,7 +707,7 @@
                     // Apply Commercial Invoice profile operations (whiteouts, text, stamps, etc.)
                     const activeOps = window.AquaShieldPDF?.loadOperations?.() || [];
                     if (activeOps.length > 0) {
-                        await window.AquaShieldPDF.applyOperations(page, fontBold, activeOps);
+                        await window.AquaShieldPDF.applyOperations(page, fontBold, activeOps, {}, pdfDoc);
                     }
                     return await pdfDoc.save();
                 } catch (err) { console.error(err); showToast('Error: ' + err.message, 'error'); return null; }
