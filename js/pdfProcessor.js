@@ -125,6 +125,24 @@ window.AquaShieldPDF = (function () {
     return migrateToProfiles();
   }
 
+  async function syncFromRemote() {
+    try {
+      const existing = localStorage.getItem(STORAGE_KEY);
+      if (existing) {
+        const data = JSON.parse(existing);
+        if (data && data.profiles && data.profiles.length > 0) return data;
+      }
+      const res = await fetch('profiles.json?t=' + Date.now());
+      if (!res.ok) return loadProfiles();
+      const remote = await res.json();
+      if (remote && remote.profiles && remote.profiles.length > 0) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(remote));
+        return remote;
+      }
+    } catch (e) { console.warn('syncFromRemote:', e); }
+    return loadProfiles();
+  }
+
   function saveProfiles(data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
@@ -325,6 +343,7 @@ window.AquaShieldPDF = (function () {
     applyOperations,
     // Perfiles
     loadProfiles,
+    syncFromRemote,
     saveProfiles,
     getActiveProfile,
     setActiveProfile,
