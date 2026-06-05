@@ -543,7 +543,15 @@
             };
 
             const saveConfig = () => {
-                saveCurrentToProfile(operations);
+                // Guardar sin imageData para evitar imágenes fantasma en localStorage
+                const cleanOps = operations.map(op => {
+                    if (op.type === 'image') {
+                        const { imageData, ...rest } = op;
+                        return rest;
+                    }
+                    return op;
+                });
+                saveCurrentToProfile(cleanOps);
                 setSaveMessage("✅ Configuración guardada correctamente");
                 showToast('Configuración guardada correctamente', 'success');
                 setTimeout(() => setSaveMessage(""), 3000);

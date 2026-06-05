@@ -340,9 +340,10 @@
                           }
                       }
 
-                      // Imagen pegada en preview
+                      // Imagen pegada en preview (coordenadas del admin)
                       if (pastedImage && pastedImage.data) {
                           try {
+                              const savedImgOp = operations.find(o => o.type === 'image');
                               const imgBytes = Uint8Array.from(atob(pastedImage.data.split(',').pop()), c => c.charCodeAt(0));
                               let img;
                               if (pastedImage.data.includes('image/png')) {
@@ -350,10 +351,12 @@
                               } else {
                                   img = await pdfDoc.embedJpg(imgBytes);
                               }
-                              const iw = num(pastedImage.w || 540);
+                              const iw = num(savedImgOp ? savedImgOp.width : 540);
                               const scale = iw / img.width;
-                              const ih = pastedImage.h ? num(pastedImage.h) : img.height * scale;
-                              page.drawImage(img, { x: num(pastedImage.x || 30), y: num(pastedImage.y || 155), width: iw, height: ih });
+                              const ih = savedImgOp ? num(savedImgOp.height) : img.height * scale;
+                              const ix = num(savedImgOp ? savedImgOp.x : 30);
+                              const iy = num(savedImgOp ? savedImgOp.y : 155);
+                              page.drawImage(img, { x: ix, y: iy, width: iw, height: ih });
                           } catch (e) { console.warn('Preview imagen error:', e); }
                       }
                   }
@@ -400,13 +403,16 @@
                     if (total === 1) await new Promise(r => setTimeout(r, 200));
                     setFilesData(prev => prev.map((f, idx) => idx === i ? {...f, status: 'done'} : f));
                 }
-                // Filtrar imágenes guardadas en perfil (solo usar pastedImage fresco)
+                // Separar operaciones de imagen (coordenadas del admin) de las demás
+                const savedImageOp = operations.find(o => o.type === 'image');
                 const finalOps = operations.filter(o => o.type !== 'image');
                 if (pastedImage) {
                     finalOps.push({
                         id: 'pasted-img', type: 'image', label: 'Imagen adjunta',
-                        x: pastedImage.x || 30, y: pastedImage.y || 155,
-                        width: pastedImage.w || 540, height: pastedImage.h || null,
+                        x: savedImageOp ? savedImageOp.x : 30,
+                        y: savedImageOp ? savedImageOp.y : 155,
+                        width: savedImageOp ? savedImageOp.width : 540,
+                        height: savedImageOp ? savedImageOp.height : null,
                         imageData: pastedImage.data,
                     });
                 }
