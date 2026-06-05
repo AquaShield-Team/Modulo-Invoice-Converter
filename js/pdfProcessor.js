@@ -183,12 +183,7 @@ window.AquaShieldPDF = (function () {
     return getActiveProfile(data).operations;
   }
 
-  function saveOperations(ops) {
-    const data = loadProfiles();
-    const profile = getActiveProfile(data);
-    profile.operations = ops;
-    saveProfiles(data);
-  }
+
 
   // ── Aplicar operaciones a una página de PDF ──────────────────
   async function applyOperations(page, font, operations, options = {}, pdfDoc = null) {
@@ -287,7 +282,8 @@ window.AquaShieldPDF = (function () {
 
   // ── Procesar múltiples archivos ──────────────────────────────
   async function processFiles(filesData, operations, options = {}) {
-    await init();
+    const loaded = await init();
+    if (!loaded) throw new Error('No se pudieron cargar las librerías PDF');
     const { PDFDocument, StandardFonts } = window.PDFLib;
     const { calibrationMode = false, showGrid = false } = options;
     const processedFiles = [];
@@ -324,23 +320,28 @@ window.AquaShieldPDF = (function () {
 
   // ── Generar preview ──────────────────────────────────────────
   async function generatePreview(pdfBytes, operations, options = {}) {
-    await init();
-    const { PDFDocument, StandardFonts } = window.PDFLib;
-    const pdfDoc = await PDFDocument.load(pdfBytes);
-    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-    const firstPage = pdfDoc.getPages()[0];
+    try {
+      const loaded = await init();
+      if (!loaded) throw new Error('No se pudieron cargar las librerías PDF');
+      const { PDFDocument, StandardFonts } = window.PDFLib;
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+      const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+      const firstPage = pdfDoc.getPages()[0];
 
-    await applyOperations(firstPage, font, operations, options, pdfDoc);
+      await applyOperations(firstPage, font, operations, options, pdfDoc);
 
-    const modifiedBytes = await pdfDoc.save();
-    return URL.createObjectURL(new Blob([modifiedBytes], { type: "application/pdf" }));
+      const modifiedBytes = await pdfDoc.save();
+      return URL.createObjectURL(new Blob([modifiedBytes], { type: "application/pdf" }));
+    } catch (err) {
+      console.error('Error generando preview:', err);
+      throw err;
+    }
   }
 
   // ── API Pública ──────────────────────────────────────────────
   return {
     init,
     processFiles,
-    generatePreview,
     applyOperations,
     // Perfiles
     loadProfiles,
@@ -352,7 +353,6 @@ window.AquaShieldPDF = (function () {
     renameProfile,
     // Compatibilidad
     loadOperations,
-    saveOperations,
     getDefaultOperations,
     num,
   };

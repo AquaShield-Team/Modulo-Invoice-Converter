@@ -147,7 +147,13 @@
             const toast = document.createElement('div');
             const icons = { success:'✓', error:'✕', warning:'⚠', info:'ℹ' };
             toast.className = 'toast toast-' + type;
-            toast.innerHTML = '<span style="font-size:1rem;font-weight:700;">' + (icons[type]||'ℹ') + '</span><span>' + message + '</span>';
+            const iconSpan = document.createElement('span');
+            iconSpan.style.cssText = 'font-size:1rem;font-weight:700;';
+            iconSpan.textContent = icons[type] || 'ℹ';
+            const msgSpan = document.createElement('span');
+            msgSpan.textContent = message;
+            toast.appendChild(iconSpan);
+            toast.appendChild(msgSpan);
             container.appendChild(toast);
             setTimeout(() => { toast.classList.add('toast-out'); setTimeout(() => toast.remove(), 300); }, duration);
         }
@@ -179,7 +185,7 @@
           const [outputUrl, setOutputUrl] = useState(null);
           const [outputName, setOutputName] = useState("");
           const [isZip, setIsZip] = useState(false);
-          const [error, setError] = useState(null);
+
           const [isDragging, setIsDragging] = useState(false);
           const [operations, setOperations] = useState([]);
           const [profiles, setProfiles] = useState({ activeId: null, profiles: [] });
@@ -290,7 +296,7 @@
             }
             setFilesData(newFilesData);
             setOutputUrl(null);
-            setError(null);
+
             setProcessingTime(null);
             showToast(newFilesData.length + ' archivo(s) cargado(s)', 'success');
           };
@@ -389,7 +395,7 @@
           const handleProcess = async () => {
             if (filesData.length === 0) return;
             setIsProcessing(true);
-            setError(null);
+
             setProgressPct(0);
             setProcessingTime(null);
             const startTime = Date.now();
@@ -436,7 +442,6 @@
                 showToast(`${total} factura(s) procesada(s) en ${elapsed}s`, 'success');
             } catch (err) {
                 console.error(err);
-                setError("Hubo un error al procesar.");
                 showToast('Error al procesar los PDFs', 'error');
                 setFilesData(prev => prev.map(f => ({...f, status: 'error'})));
             } finally {
@@ -605,7 +610,7 @@
                   // Apply Commercial Invoice profile operations (whiteouts, text, stamps, etc.)
                   const activeOps = window.AquaShieldPDF?.loadOperations?.() || [];
                   if (activeOps.length > 0) {
-                      await window.AquaShieldPDF.applyOperations(page, fontBold, activeOps);
+                      await window.AquaShieldPDF.applyOperations(page, fontBold, activeOps, {}, pdfDoc);
                   }
                   return await pdfDoc.save();
               } catch (err) { console.error(err); showToast('Error: ' + err.message, 'error'); return null; }
