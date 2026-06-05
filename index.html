@@ -216,6 +216,7 @@
           const [mPreviewScale, setMPreviewScale] = useState(1.2);
           const [activeModule, setActiveModule] = useState('invoice');
           const [pastedImage, setPastedImage] = useState(null); // { data: base64, width, height }
+          const [imgScale, setImgScale] = useState(100); // porcentaje de escala
 
           const mCanvasRef = useRef(null);
           const mFileInputRef = useRef(null);
@@ -355,9 +356,10 @@
                               } else {
                                   img = await pdfDoc.embedJpg(imgBytes);
                               }
-                              const iw = num(savedImgOp ? savedImgOp.width : 540);
+                              const scaleFactor = imgScale / 100;
+                              const iw = num(savedImgOp ? savedImgOp.width : 540) * scaleFactor;
                               const scale = iw / img.width;
-                              const ih = savedImgOp ? num(savedImgOp.height) : img.height * scale;
+                              const ih = savedImgOp ? num(savedImgOp.height) * scaleFactor : img.height * scale;
                               const ix = num(savedImgOp ? savedImgOp.x : 30);
                               const iy = num(savedImgOp ? savedImgOp.y : 155);
                               pg.drawImage(img, { x: ix, y: iy, width: iw, height: ih });
@@ -384,7 +386,7 @@
               if (debounceRef.current) clearTimeout(debounceRef.current);
               debounceRef.current = setTimeout(() => renderPreview(), 300);
               return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-          }, [pdfBytes, operations, currentPage, pastedImage]);
+          }, [pdfBytes, operations, currentPage, pastedImage, imgScale]);
 
           // ═══════════════════════════════════════════════════
           // ── COMMERCIAL INVOICE: Process ──
@@ -411,12 +413,13 @@
                 const savedImageOp = operations.find(o => o.type === 'image');
                 const finalOps = operations.filter(o => o.type !== 'image');
                 if (pastedImage) {
+                    const scaleFactor = imgScale / 100;
                     finalOps.push({
                         id: 'pasted-img', type: 'image', label: 'Imagen adjunta',
                         x: savedImageOp ? savedImageOp.x : 30,
                         y: savedImageOp ? savedImageOp.y : 155,
-                        width: savedImageOp ? savedImageOp.width : 540,
-                        height: savedImageOp ? savedImageOp.height : null,
+                        width: (savedImageOp ? savedImageOp.width : 540) * scaleFactor,
+                        height: savedImageOp && savedImageOp.height ? savedImageOp.height * scaleFactor : null,
                         imageData: pastedImage.data,
                     });
                 }
@@ -880,7 +883,12 @@
                                 ) : (
                                     <div style={{position:'relative',borderRadius:'8px',overflow:'hidden',border:'1px solid var(--border-main)',background:'white'}}>
                                         <img src={pastedImage.data} style={{width:'100%',maxHeight:'120px',objectFit:'contain',display:'block',padding:'4px'}} />
-                                        <button onClick={() => setPastedImage(null)} style={{position:'absolute',top:'4px',right:'4px',background:'var(--danger)',color:'white',border:'none',borderRadius:'50%',width:'20px',height:'20px',fontSize:'11px',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1,boxShadow:'0 2px 4px rgba(0,0,0,0.3)'}}>✕</button>
+                                        <button onClick={() => { setPastedImage(null); setImgScale(100); }} style={{position:'absolute',top:'4px',right:'4px',background:'var(--danger)',color:'white',border:'none',borderRadius:'50%',width:'20px',height:'20px',fontSize:'11px',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1,boxShadow:'0 2px 4px rgba(0,0,0,0.3)'}}>✕</button>
+                                    </div>
+                                    <div style={{display:'flex',alignItems:'center',gap:'0.5rem',marginTop:'0.4rem'}}>
+                                        <span className="mono" style={{fontSize:'0.6rem',color:'var(--text-muted)',minWidth:'28px'}}>{imgScale}%</span>
+                                        <input type="range" min="30" max="200" value={imgScale} onChange={e => setImgScale(Number(e.target.value))} style={{flex:1,accentColor:'#9333EA',height:'4px',cursor:'pointer'}} />
+                                        <button onClick={() => setImgScale(100)} style={{background:'none',border:'1px solid var(--border-main)',borderRadius:'4px',color:'var(--text-muted)',fontSize:'0.55rem',fontFamily:'var(--font-mono)',padding:'2px 6px',cursor:'pointer'}}>Reset</button>
                                     </div>
                                 )}
                             </div>
