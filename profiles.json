@@ -66,6 +66,16 @@
           "color": "#000000",
           "borderColor": "#000000",
           "bgColor": "#FFFFFF"
+        },
+        {
+          "id": "e1a2b3c4-timbre-aq01",
+          "type": "rect",
+          "label": "Timbre Electrónico",
+          "x": 48,
+          "y": 28,
+          "width": 232,
+          "height": 125,
+          "color": "#FFFFFF"
         }
       ]
     },
@@ -114,6 +124,16 @@
           "color": "#000000",
           "borderColor": "#000000",
           "bgColor": "#FFFFFF"
+        },
+        {
+          "id": "e1a2b3c4-timbre-fi01",
+          "type": "rect",
+          "label": "Timbre Electrónico",
+          "x": 48,
+          "y": 28,
+          "width": 232,
+          "height": 125,
+          "color": "#FFFFFF"
         }
       ]
     }

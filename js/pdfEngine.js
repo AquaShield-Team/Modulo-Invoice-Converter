@@ -67,7 +67,8 @@ window.AquaShieldPDF = (function () {
           { "id": "28f0e699-8e1c-447f-9123-7ce72b60fb90", "type": "rect", "label": "Ocultar \"S.I.I. PTO MONTT\"", "x": 415, "y": 800, "width": 120, "height": 12, "color": "#FFFFFF" },
           { "id": "1a632919-3c39-45fe-a34e-d230bf78f6ac", "type": "text", "label": "EMPRESAS AQUACHILE S.A.", "text": "EMPRESAS AQUACHILE S.A.", "x": 161, "y": 901, "size": 14, "color": "#000000" },
           { "id": "b8346896-c77c-4f05-b4c5-1c0329cec3dd", "type": "text", "label": "COMMERCIAL INVOICE", "text": "COMMERCIAL INVOICE", "x": 405, "y": 860, "size": 14, "color": "#FF0000" },
-          { "id": "f532632e-de86-4f72-bed6-0ae39bdbf8fb", "type": "notes", "label": "Notas", "x": 40, "y": 20, "width": 230, "height": 125, "color": "#000000", "borderColor": "#000000", "bgColor": "#FFFFFF" }
+          { "id": "f532632e-de86-4f72-bed6-0ae39bdbf8fb", "type": "notes", "label": "Notas", "x": 40, "y": 20, "width": 230, "height": 125, "color": "#000000", "borderColor": "#000000", "bgColor": "#FFFFFF" },
+          { "id": "e1a2b3c4-timbre-aq01", "type": "rect", "label": "Timbre Electrónico", "x": 48, "y": 28, "width": 232, "height": 125, "color": "#FFFFFF" }
         ]
       },
       {
@@ -77,7 +78,8 @@ window.AquaShieldPDF = (function () {
           { "id": "1a0d312c-a3cd-4354-b082-f63e602e2d18", "type": "rect", "label": "Ocultar \"FACTURA DE EXPORT...\"", "x": 385, "y": 840, "width": 195, "height": 40, "color": "#FFFFFF" },
           { "id": "5caf99ba-c2f2-4a34-b985-a4fd3a54d846", "type": "rect", "label": "Ocultar \"S.I.I. - RANCAGUA\"", "x": 425, "y": 800, "width": 110, "height": 12, "color": "#FFFFFF" },
           { "id": "9b3ce768-5160-4849-9d3d-21ede3308389", "type": "text", "label": "COMMERCIAL INVOICE", "text": "COMMERCIAL INVOICE", "x": 405, "y": 860, "size": 14, "color": "#FF0000" },
-          { "id": "5131557b-e3f5-46e3-80c1-077731988ace", "type": "notes", "label": "Notas", "x": 40, "y": 20, "width": 230, "height": 125, "color": "#000000", "borderColor": "#000000", "bgColor": "#FFFFFF" }
+          { "id": "5131557b-e3f5-46e3-80c1-077731988ace", "type": "notes", "label": "Notas", "x": 40, "y": 20, "width": 230, "height": 125, "color": "#000000", "borderColor": "#000000", "bgColor": "#FFFFFF" },
+          { "id": "e1a2b3c4-timbre-fi01", "type": "rect", "label": "Timbre Electrónico", "x": 48, "y": 28, "width": 232, "height": 125, "color": "#FFFFFF" }
         ]
       }
     ]
