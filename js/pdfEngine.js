@@ -270,8 +270,12 @@ window.AquaShieldPDF = (function () {
       }
     }
 
+    // Ordenar: rects primero (cubren), luego images, texts, notes (se dibujan encima)
+    const typePriority = { rect: 0, image: 1, text: 2, notes: 3 };
+    const sorted = [...operations].sort((a, b) => (typePriority[a.type] ?? 9) - (typePriority[b.type] ?? 9));
+
     // Aplicar cada operación
-    for (const op of operations) {
+    for (const op of sorted) {
       if (op.type === "rect") {
         const c = calibrationMode ? { r: 1, g: 0, b: 0 } : hexToRgb(op.color || "#FFFFFF");
         page.drawRectangle({
