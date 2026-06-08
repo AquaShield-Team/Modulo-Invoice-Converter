@@ -881,7 +881,7 @@
                                             </label>
                                             <label className="flex items-center space-x-2 cursor-pointer text-xs">
                                                 <input type="checkbox" checked={calibrationMode} onChange={e => setCalibrationMode(e.target.checked)} className="rounded" />
-                                                <span className="text-red-400 hover:text-red-300 transition-colors">Cajas Rojas</span>
+                                                <span className="text-[#C76728] hover:text-[#EB5F0A] transition-colors">Cajas Rojas</span>
                                             </label>
                                             <button onClick={() => { setPdfBytes(null); setPreviewReady(false); setMultipleFiles([]); setOutputUrl(null); }} className="text-gray-500 hover:text-white text-xs underline transition-colors">Cambiar PDF</button>
                                         </div>
@@ -995,7 +995,7 @@
                                     <button onClick={addText} className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#4a5a68] text-white py-2.5 rounded-lg text-xs font-bold transition-all border border-[#4a5a68] hover:border-brand-accent/50">
                                         <PlusIcon size={12}/> <span>Texto</span>
                                     </button>
-                                    <button onClick={addNotes} className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#4a5a68] text-amber-300 py-2.5 rounded-lg text-xs font-bold transition-all border border-[#4a5a68] hover:border-amber-400/50">
+                                    <button onClick={addNotes} className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#4a5a68] text-[#EB5F0A] py-2.5 rounded-lg text-xs font-bold transition-all border border-[#4a5a68] hover:border-[#EB5F0A]/50">
                                         <PlusIcon size={12}/> <span>Notas</span>
                                     </button>
                                 </div>
@@ -1153,7 +1153,7 @@
             const isRect = op.type === 'rect';
             const isNotes = op.type === 'notes';
             const isImage = op.type === 'image';
-            const dotColor = isImage ? 'bg-purple-400' : (isRect ? 'bg-red-400' : (isNotes ? 'bg-amber-400' : 'bg-emerald-400'));
+            const dotColor = isImage ? 'bg-[#B4A28D]' : (isRect ? 'bg-[#C76728]' : (isNotes ? 'bg-[#EB5F0A]' : 'bg-[#6C8B8B]'));
 
             return (
                 <div className="layer-card bg-[#3a4a58] rounded-lg border border-[#4a5a68] overflow-hidden hover:border-[#5a6a78] transition-colors">
@@ -1173,7 +1173,7 @@
                             <button onClick={e => { e.stopPropagation(); onMove(index, -1); }} disabled={index === 0} className="p-1 text-gray-500 hover:text-white disabled:opacity-20 transition-colors" title="Mover arriba">▲</button>
                             <button onClick={e => { e.stopPropagation(); onMove(index, 1); }} disabled={index === total - 1} className="p-1 text-gray-500 hover:text-white disabled:opacity-20 transition-colors" title="Mover abajo">▼</button>
                             <button onClick={e => { e.stopPropagation(); onDuplicate(op); }} className="p-1 text-gray-500 hover:text-blue-400 transition-colors" title="Duplicar"><CopyIcon size={13}/></button>
-                            <button onClick={e => { e.stopPropagation(); onRemove(op.id); }} className="p-1 text-gray-500 hover:text-red-400 transition-colors" title="Eliminar"><TrashIcon size={13}/></button>
+                            <button onClick={e => { e.stopPropagation(); onRemove(op.id); }} className="p-1 text-gray-500 hover:text-[#C76728] transition-colors" title="Eliminar"><TrashIcon size={13}/></button>
                             <span className="text-gray-600 text-xs ml-1">{collapsed ? '▸' : '▾'}</span>
                         </div>
                     </div>
