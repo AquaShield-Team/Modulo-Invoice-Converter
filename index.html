@@ -23,17 +23,17 @@
     <script src="js/pdfProcessor.js?v=2.0"></script>
 
     <script>
-        tailwind.config = { theme: { extend: { colors: { brand: { primary:'#445565', accent:'#EB5F0A', warm:'#EFE9E5', cool:'#EFEFE0' }}}}}
+        tailwind.config = { theme: { extend: { colors: { brand: { primary:'#445563', accent:'#EB5F0A', warm:'#EFE9E5', cool:'#EFEFE0' }}}}}
     </script>
 
     <style>
         /* ── Industrial Fusion: Light Theme (default) — Manual de Marca AquaChile ── */
         :root {
-            --accent:#EB5F0A; --accent-glow:rgba(235,95,10,0.15); --accent-hover:#f57423; --accent-dim:rgba(235,95,10,0.08);
-            --bg-main:#EFE9E5; --bg-sidebar:#ffffff; --bg-card:rgba(255,255,255,0.95); --bg-card-hover:rgba(245,240,236,1); --bg-input:#ffffff;
-            --border-main:#d9d0c7; --border-hover:#b4a28d; --border-accent:rgba(235,95,10,0.3);
-            --text-primary:#445563; --text-secondary:#5a6b7c; --text-muted:#8fa0b0;
-            --secondary:#445563; --success:#059669; --danger:#ef4444; --warning:#d97706; --info:#60a5fa;
+            --accent:#EB5F0A; --accent-glow:rgba(235,95,10,0.15); --accent-hover:#C76728; --accent-dim:rgba(235,95,10,0.08);
+            --bg-main:#F7FAFC; --bg-sidebar:#ffffff; --bg-card:rgba(255,255,255,0.95); --bg-card-hover:rgba(237,242,247,1); --bg-input:#ffffff;
+            --border-main:#E2E8F0; --border-hover:#B4A28D; --border-accent:rgba(235,95,10,0.3);
+            --text-primary:#445563; --text-secondary:#8F9CA7; --text-muted:#8F9CA7;
+            --secondary:#445563; --success:#6C8B8B; --danger:#C76728; --warning:#EB5F0A; --info:#445563;
             --shadow-card:0 4px 20px rgba(0,0,0,0.06); --shadow-glow:0 0 20px rgba(235,95,10,0.1);
             --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
             --font-heading:'Quicksand',sans-serif; --font-mono:'JetBrains Mono','Consolas',monospace;
@@ -42,11 +42,11 @@
         /* ── Industrial Fusion: Dark Theme — Manual de Marca AquaChile ── */
         body.dark-theme {
             --accent-glow:rgba(235,95,10,0.25); --accent-dim:rgba(235,95,10,0.12);
-            --bg-main:#2d3a45; --bg-sidebar:#3a4a58; --bg-card:rgba(58,74,88,0.85); --bg-card-hover:rgba(68,85,99,0.95); --bg-input:#445563;
-            --border-main:#4a5a68; --border-hover:#5a6a78;
-            --text-primary:#f8fafc; --text-secondary:#e4e6eb; --text-muted:#8fa0b0;
-            --secondary:#445563; --success:#10b981; --danger:#ff6b6b; --warning:#fbbf24;
-            --shadow-card:0 4px 24px rgba(0,0,0,0.2); --shadow-glow:0 0 30px rgba(235,95,10,0.15);
+            --bg-main:#1E2D3B; --bg-sidebar:#1E2D3B; --bg-card:rgba(44,62,80,0.85); --bg-card-hover:rgba(54,72,90,0.95); --bg-input:#2C3E50;
+            --border-main:#334155; --border-hover:#445563;
+            --text-primary:#E2E8F0; --text-secondary:#94A3B8; --text-muted:#94A3B8;
+            --secondary:#445563; --success:#8AACAC; --danger:#C76728; --warning:#EB5F0A;
+            --shadow-card:none; --shadow-glow:0 0 30px rgba(235,95,10,0.15);
         }
         *{margin:0;padding:0;box-sizing:border-box;}
         body{background:var(--bg-main);color:var(--text-primary);font-family:var(--font);display:flex;flex-direction:column;height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased;transition:background 0.4s ease,color 0.4s ease;}
@@ -69,7 +69,7 @@
         .notes-textarea{width:100%;padding:10px 12px;border:1px solid var(--border-main);border-radius:8px;font-family:var(--font);font-size:0.75rem;line-height:1.6;resize:vertical;min-height:140px;transition:var(--transition);background:var(--bg-input);color:var(--text-primary);}
         .notes-textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
         .notes-textarea::placeholder{color:var(--text-muted);}
-        .notes-textarea.overflow-warning{border-color:var(--danger);background:rgba(239,68,68,0.04);}
+        .notes-textarea.overflow-warning{border-color:var(--danger);background:rgba(199,103,40,0.04);}
 
         .theme-toggle{width:40px;height:40px;background:var(--secondary);border:none;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;cursor:pointer;box-shadow:0 4px 10px rgba(68,85,99,0.3);transition:var(--transition);}
         .theme-toggle:hover{background:var(--accent);box-shadow:0 4px 14px var(--accent-glow);}
@@ -842,7 +842,7 @@
                                             </div>
                                             <textarea value={op.text||''} onChange={e => updateNoteText(op.id, e.target.value)} className={'notes-textarea' + (isOverflow ? ' overflow-warning' : '')} placeholder={'Escribe aquí...\nEnter = nueva línea'} rows={Math.max(5, lines.length+1)} />
                                             {isOverflow && (
-                                                <div style={{display:'flex',alignItems:'center',gap:'5px',color:'var(--danger)',fontSize:'0.6rem',fontWeight:700,padding:'0.3rem 0.5rem',background:'rgba(239,68,68,0.06)',borderRadius:'6px',border:'1px solid rgba(239,68,68,0.15)'}}>
+                                                <div style={{display:'flex',alignItems:'center',gap:'5px',color:'var(--danger)',fontSize:'0.6rem',fontWeight:700,padding:'0.3rem 0.5rem',background:'rgba(199,103,40,0.06)',borderRadius:'6px',border:'1px solid rgba(199,103,40,0.15)'}}>
                                                     <AlertCircleIcon s={12}/><span>Excede el recuadro ({lines.length} líneas, máx. {maxLines})</span>
                                                 </div>
                                             )}
