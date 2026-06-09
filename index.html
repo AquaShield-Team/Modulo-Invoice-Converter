@@ -954,6 +954,21 @@
                         <>
                         {/* Left: Editor Panel */}
                         <div style={{flex: mShowPreview ? '0 0 55%' : '1', display:'flex', flexDirection:'column', gap:'0.8rem', overflow:'hidden'}}>
+                            {/* Profile selector */}
+                            <div style={{display:'flex',alignItems:'center',gap:'0.6rem',padding:'0.5rem 0.8rem',background:'var(--bg-card)',border:'1px solid var(--border-main)',borderRadius:'10px',flexShrink:0}}>
+                                <LayersIcon />
+                                <span className="text-tiny mono" style={{color:'var(--text-muted)',fontWeight:700,textTransform:'uppercase'}}>Plantilla</span>
+                                <select
+                                    value={profiles.activeId || ''}
+                                    onChange={e => switchProfile(e.target.value)}
+                                    style={{flex:1,maxWidth:'220px',padding:'0.4rem 0.6rem',borderRadius:'8px',border:'1px solid var(--border-main)',background:'var(--bg-input)',color:'var(--text-primary)',fontFamily:'var(--font-heading)',fontWeight:600,fontSize:'0.75rem',cursor:'pointer',outline:'none'}}
+                                >
+                                    {profiles.profiles.map(p => (
+                                        <option key={p.id} value={p.id}>{p.name}</option>
+                                    ))}
+                                </select>
+                                <span className="text-tiny" style={{color:'var(--text-muted)',marginLeft:'auto'}}>Las operaciones del perfil se aplican al generar</span>
+                            </div>
                             {/* Stats */}
                             <div style={{display:'flex',gap:'0.5rem',flexShrink:0,flexWrap:'wrap'}}>
                                 <div className="m-stat-card" style={{flex:1,minWidth:'100px'}}><span style={{fontSize:'0.6rem',color:'var(--text-muted)',fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',fontFamily:'var(--font-heading)'}}>Archivo</span><span className="mono" style={{fontSize:'0.7rem',color:'var(--text-secondary)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{mFileName}</span></div>
