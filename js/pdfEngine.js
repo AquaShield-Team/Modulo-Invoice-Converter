@@ -6,27 +6,28 @@
 
 window.AquaShieldPDF = (function () {
   let isLoaded = false;
-  let isLoading = false;
 
   const STORAGE_KEY = 'aquashield_profiles_v1';
 
   // ── Inicialización de librerías ──────────────────────────────
+  let initPromise = null;
   async function init() {
     if (isLoaded) return true;
-    if (isLoading) {
-      while (isLoading) await new Promise((r) => setTimeout(r, 80));
-      return isLoaded;
-    }
-    isLoading = true;
-    try {
-      if (!window.PDFLib) await loadScript("https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js");
-      if (!window.JSZip) await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
-      isLoaded = true;
-    } catch (err) {
-      console.error("Error cargando librerías:", err);
-    }
-    isLoading = false;
-    return isLoaded;
+    if (initPromise) return initPromise;
+    initPromise = (async () => {
+      try {
+        if (!window.PDFLib) await loadScript('https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js');
+        if (!window.JSZip) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+        isLoaded = true;
+        return true;
+      } catch (err) {
+        console.error('Error cargando librerías:', err);
+        throw new Error('No se pudieron cargar las librerías: ' + err.message);
+      } finally {
+        initPromise = null;
+      }
+    })();
+    return initPromise;
   }
 
   function loadScript(src) {
@@ -46,11 +47,13 @@ window.AquaShieldPDF = (function () {
   }
 
   function hexToRgb(hex) {
-    const h = hex.replace("#", "");
+    if (!hex || typeof hex !== 'string') return { r: 0, g: 0, b: 0 };
+    let h = hex.replace('#', '');
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
     return {
-      r: parseInt(h.substring(0, 2), 16) / 255,
-      g: parseInt(h.substring(2, 4), 16) / 255,
-      b: parseInt(h.substring(4, 6), 16) / 255,
+      r: (parseInt(h.substring(0, 2), 16) || 0) / 255,
+      g: (parseInt(h.substring(2, 4), 16) || 0) / 255,
+      b: (parseInt(h.substring(4, 6), 16) || 0) / 255,
     };
   }
 
@@ -85,9 +88,7 @@ window.AquaShieldPDF = (function () {
     ]
   };
 
-  function getDefaultOperations() {
-    return BUILT_IN_PROFILES.profiles[0].operations.map(op => ({...op, id: crypto.randomUUID()}));
-  }
+
 
   // ── Sistema de Perfiles ─────────────────────────────────────
   function migrateToProfiles() {
@@ -98,7 +99,7 @@ window.AquaShieldPDF = (function () {
     try {
       const raw = localStorage.getItem("aquachile_invoice_config_v9");
       if (raw) existingOps = JSON.parse(raw);
-    } catch (e) {}
+    } catch (e) { console.warn('Migration: failed to parse config', e); }
 
     // Intentar v8
     if (!existingOps) {
@@ -121,7 +122,7 @@ window.AquaShieldPDF = (function () {
           }
           if (ops.length > 0) existingOps = ops;
         }
-      } catch (e) {}
+      } catch (e) { console.warn('Migration: failed to parse config', e); }
     }
 
     // Si no hay migración posible, usar los perfiles embebidos completos
@@ -159,7 +160,10 @@ window.AquaShieldPDF = (function () {
 
   async function syncFromRemote() {
     try {
-      const res = await fetch('profiles.json?t=' + Date.now());
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      const res = await fetch('profiles.json?t=' + Date.now(), { signal: controller.signal });
+      clearTimeout(timeout);
       if (!res.ok) return loadProfiles();
       const remote = await res.json();
       if (!remote || !remote.profiles || remote.profiles.length === 0) return loadProfiles();
@@ -404,7 +408,5 @@ window.AquaShieldPDF = (function () {
     renameProfile,
     // Compatibilidad
     loadOperations,
-    getDefaultOperations,
-    num,
   };
 })();

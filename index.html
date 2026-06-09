@@ -172,7 +172,7 @@
         const AlertCircleIcon = ({s=16}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>;
         const EditIcon = ({s=16}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>;
         const ClockIcon = ({s=14}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
-        const TrashIcon = ({s=12}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>;
+
         const ChevronLeft = ({s=16}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
         const ChevronRight = ({s=16}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>;
 
@@ -186,9 +186,7 @@
           const [pdfBytes, setPdfBytes] = useState(null);
           const [isProcessing, setIsProcessing] = useState(false);
           const [isRendering, setIsRendering] = useState(false);
-          const [outputUrl, setOutputUrl] = useState(null);
-          const [outputName, setOutputName] = useState("");
-          const [isZip, setIsZip] = useState(false);
+
 
           const [isDragging, setIsDragging] = useState(false);
           const [operations, setOperations] = useState([]);
@@ -221,8 +219,7 @@
           const [mShowPreview, setMShowPreview] = useState(true);
           const [mPreviewScale, setMPreviewScale] = useState(1.2);
           const [activeModule, setActiveModule] = useState('invoice');
-          const [pastedImage, setPastedImage] = useState(null); // { data: base64, width, height }
-          const [imgScale, setImgScale] = useState(100); // porcentaje de escala
+
 
           const mCanvasRef = useRef(null);
           const mFileInputRef = useRef(null);
@@ -244,7 +241,7 @@
               window.AquaShieldPDF.init().then(async () => {
                   await window.AquaShieldPDF.syncFromRemote();
                   refreshProfiles();
-              });
+              }).catch(err => { console.error('Init failed:', err); });
           }, []);
 
           const refreshProfiles = () => {
@@ -300,7 +297,7 @@
               catch (err) { console.error("Error leyendo:", f.name); }
             }
             setFilesData(newFilesData);
-            setOutputUrl(null);
+
 
             setProcessingTime(null);
             showToast(newFilesData.length + ' archivo(s) cargado(s)', 'success');
@@ -352,26 +349,7 @@
                           }
                       }
 
-                      // Imagen pegada en preview (coordenadas del admin)
-                      if (pastedImage && pastedImage.data) {
-                          try {
-                              const savedImgOp = operations.find(o => o.type === 'image');
-                              const imgBytes = Uint8Array.from(atob(pastedImage.data.split(',').pop()), c => c.charCodeAt(0));
-                              let img;
-                              if (pastedImage.data.includes('image/png')) {
-                                  img = await pdfDoc.embedPng(imgBytes);
-                              } else {
-                                  img = await pdfDoc.embedJpg(imgBytes);
-                              }
-                              const scaleFactor = imgScale / 100;
-                              const iw = num(savedImgOp ? savedImgOp.width : 540) * scaleFactor;
-                              const scale = iw / img.width;
-                              const ih = savedImgOp ? num(savedImgOp.height) * scaleFactor : img.height * scale;
-                              const ix = num(savedImgOp ? savedImgOp.x : 30);
-                              const iy = num(savedImgOp ? savedImgOp.y : 155);
-                              pg.drawImage(img, { x: ix, y: iy, width: iw, height: ih });
-                          } catch (e) { console.warn('Preview imagen error:', e); }
-                      }
+
                   }
 
                   const modifiedBytes = await pdfDoc.save();
@@ -393,7 +371,7 @@
               if (debounceRef.current) clearTimeout(debounceRef.current);
               debounceRef.current = setTimeout(() => renderPreview(), 300);
               return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-          }, [pdfBytes, operations, currentPage, pastedImage, imgScale]);
+          }, [pdfBytes, operations, currentPage]);
 
           // ═══════════════════════════════════════════════════
           // ── COMMERCIAL INVOICE: Process ──
@@ -419,22 +397,9 @@
                 // Separar operaciones de imagen (coordenadas del admin) de las demás
                 const savedImageOp = operations.find(o => o.type === 'image');
                 const finalOps = operations.filter(o => o.type !== 'image');
-                if (pastedImage) {
-                    const scaleFactor = imgScale / 100;
-                    finalOps.push({
-                        id: 'pasted-img', type: 'image', label: 'Imagen adjunta',
-                        x: savedImageOp ? savedImageOp.x : 30,
-                        y: savedImageOp ? savedImageOp.y : 155,
-                        width: (savedImageOp ? savedImageOp.width : 540) * scaleFactor,
-                        height: savedImageOp && savedImageOp.height ? savedImageOp.height * scaleFactor : null,
-                        imageData: pastedImage.data,
-                    });
-                }
+
 
                 const result = await window.AquaShieldPDF.processFiles(filesData, finalOps);
-                setOutputUrl(result.url);
-                setOutputName(result.name);
-                setIsZip(result.isZip);
                 setProgressPct(100);
                 setProgressText('');
 
@@ -644,7 +609,7 @@
               if (!mPdfBytes) return;
               const canvas = mCanvasRef.current;
               if (!canvas) {
-                  setTimeout(() => renderMermasPreview(), 200);
+                  if (mShowPreview) setTimeout(() => renderMermasPreview(), 200);
                   return;
               }
               try {
@@ -762,7 +727,7 @@
                                         <span className="mono text-tiny" style={{color:'var(--text-muted)'}}>Pág. {currentPage} de {totalPages}</span>
                                         <button disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => Math.min(totalPages, p+1))} style={{background:'none',border:'none',cursor:'pointer',color: currentPage >= totalPages ? 'var(--border-main)' : 'var(--text-primary)',padding:'2px'}}><ChevronRight /></button>
                                     </div>
-                                    <button onClick={() => { setPdfBytes(null); setFilesData([]); setOutputUrl(null); setProcessingTime(null); setTotalPages(1); setCurrentPage(1); }} style={{background:'none',border:'none',color:'var(--text-muted)',cursor:'pointer',fontSize:'0.65rem',fontFamily:'var(--font-mono)',textDecoration:'underline'}}>Cambiar</button>
+                                    <button onClick={() => { setPdfBytes(null); setFilesData([]); setProcessingTime(null); setTotalPages(1); setCurrentPage(1); }} style={{background:'none',border:'none',color:'var(--text-muted)',cursor:'pointer',fontSize:'0.65rem',fontFamily:'var(--font-mono)',textDecoration:'underline'}}>Cambiar</button>
                                 </div>
                                 <div ref={previewContainerRef} style={{flex:1,overflowY:'auto',padding:'1rem',minHeight:0}}>
                                     <div style={{display:'flex',justifyContent:'center'}}>
@@ -870,7 +835,7 @@
                                 </div>
                             )}
                             {filesData.length > 0 && (
-                                <button onClick={() => { setFilesData([]); setPdfBytes(null); setOutputUrl(null); setOutputName(''); setIsZip(false); setPastedImage(null); setProgressPct(0); setProcessingTime(null); }} style={{width:'100%',background:'none',border:'1px solid var(--border-main)',borderRadius:'8px',color:'var(--text-muted)',fontSize:'0.65rem',fontFamily:'var(--font-mono)',padding:'0.5rem',cursor:'pointer',transition:'var(--transition)'}} onMouseEnter={e => e.target.style.borderColor='var(--danger)'} onMouseLeave={e => e.target.style.borderColor='var(--border-main)'}>
+                                <button onClick={() => { setFilesData([]); setPdfBytes(null); setProgressPct(0); setProcessingTime(null); }} style={{width:'100%',background:'none',border:'1px solid var(--border-main)',borderRadius:'8px',color:'var(--text-muted)',fontSize:'0.65rem',fontFamily:'var(--font-mono)',padding:'0.5rem',cursor:'pointer',transition:'var(--transition)'}} onMouseEnter={e => e.target.style.borderColor='var(--danger)'} onMouseLeave={e => e.target.style.borderColor='var(--border-main)'}>
                                     🧹 Limpiar
                                 </button>
                             )}

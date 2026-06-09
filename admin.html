@@ -89,9 +89,7 @@
         @keyframes toastIn{from{opacity:0;transform:translateX(60px);}to{opacity:1;transform:translateX(0);}}
         @keyframes toastOut{from{opacity:1;transform:translateX(0);}to{opacity:0;transform:translateX(60px);}}
 
-        /* Theme toggle & avatar */
-        .theme-toggle-btn{width:36px;height:36px;background:#445563;border:none;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;cursor:pointer;transition:all 0.3s ease;}
-        .theme-toggle-btn:hover{background:#EB5F0A;}
+        /* Avatar */
         .admin-avatar{width:36px;height:36px;background:#445563;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;}
         .admin-user-profile{display:flex;align-items:center;gap:0.6rem;padding-left:1rem;border-left:1px solid #334155;height:24px;}
 
@@ -544,7 +542,7 @@
                     setOutputUrl(result.url);
                     setOutputName(result.name);
                     setIsZip(result.isZip);
-                } catch(err) { console.error(err); }
+                } catch(err) { console.error(err); showToast('Error al procesar: ' + err.message, 'error'); }
                 finally { setIsProcessing(false); }
             };
 
@@ -555,8 +553,8 @@
             const mFileInputRef = useRef(null);
             const mPreviewTimer = useRef(null);
 
-            const mFmtNum = (n, decimals=2) => {
-                const parts = n.toFixed(decimals).split('.');
+            const mFmtNum = (value, decimals=2) => {
+                const parts = value.toFixed(decimals).split('.');
                 parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
                 return parts.join(',');
             };
@@ -648,8 +646,8 @@
             };
 
             const updateMCajas = (id, value) => {
-                const n = parseInt(value) || 0;
-                setMProducts(prev => prev.map(p => p.id === id ? { ...p, newCajas: n } : p));
+                const val = parseInt(value) || 0;
+                setMProducts(prev => prev.map(p => p.id === id ? { ...p, newCajas: val } : p));
             };
             const resetMermas = () => { setMProducts(prev => prev.map(p => ({ ...p, newCajas: p.originalCajas }))); showToast('Valores restaurados', 'info'); };
 
@@ -720,7 +718,7 @@
                     const blob = new Blob([bytes], { type: 'application/pdf' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a'); a.href = url; a.download = 'MERMA_' + mFileName; a.click();
-                    URL.revokeObjectURL(url);
+                    setTimeout(() => URL.revokeObjectURL(url), 10000);
                     showToast('PDF generado: MERMA_' + mFileName, 'success');
                 }
                 setMIsProcessing(false);
@@ -731,7 +729,7 @@
                 // Wait for canvas to be mounted (might not be ready immediately after state change)
                 const canvas = mCanvasRef.current;
                 if (!canvas) {
-                    setTimeout(() => renderMermasPreview(), 200);
+                    if (mShowPreview && activeModule === 'mermas') setTimeout(() => renderMermasPreview(), 200);
                     return;
                 }
                 try {
