@@ -328,7 +328,6 @@
 
                   // Aplicar operaciones a TODAS las páginas
                   for (const pg of pages) {
-                      // Filtrar operaciones tipo image del perfil (solo usar pastedImage)
                       for (const op of operations.filter(o => o.type !== 'image')) {
                           if (op.type === 'rect') {
                               const hex = op.color || '#FFFFFF';
@@ -394,10 +393,7 @@
                     if (total === 1) await new Promise(r => setTimeout(r, 200));
                     setFilesData(prev => prev.map((f, idx) => idx === i ? {...f, status: 'done'} : f));
                 }
-                // Separar operaciones de imagen (coordenadas del admin) de las demás
-                const savedImageOp = operations.find(o => o.type === 'image');
                 const finalOps = operations.filter(o => o.type !== 'image');
-
 
                 const result = await window.AquaShieldPDF.processFiles(filesData, finalOps);
                 setProgressPct(100);

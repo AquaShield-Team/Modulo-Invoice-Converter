@@ -247,7 +247,7 @@ window.AquaShieldPDF = (function () {
     return data;
   }
 
-  // ── Compatibilidad: loadOperations/saveOperations (usan perfil activo) ──
+  // ── Compatibilidad: loadOperations (usa perfil activo) ──
   function loadOperations() {
     const data = loadProfiles();
     return getActiveProfile(data).operations;
