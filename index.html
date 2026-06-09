@@ -855,51 +855,6 @@
                                 </div>
                             )}
 
-                            {/* Image Paste Section */}
-                            <div style={{borderTop:'1px solid var(--border-main)',paddingTop:'0.8rem'}}>
-                                <div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginBottom:'0.5rem'}}>
-                                    <span style={{fontSize:'0.8rem'}}>📎</span>
-                                    <span style={{fontFamily:'var(--font-heading)',fontWeight:700,fontSize:'0.85rem'}}>Imagen Adjunta</span>
-                                </div>
-                                <p className="text-tiny" style={{color:'var(--text-muted)',marginTop:'3px',marginBottom:'0.5rem'}}>Se incrusta en la parte inferior del PDF</p>
-                                {!pastedImage ? (
-                                    <div
-                                        tabIndex={0}
-                                        className="notes-textarea"
-                                        style={{minHeight:'80px',display:'flex',alignItems:'center',justifyContent:'center',cursor:'text',color:'var(--text-muted)',fontSize:'0.75rem',fontFamily:'var(--font-mono)',textAlign:'center',lineHeight:1.5}}
-                                        onPaste={e => {
-                                            const items = e.clipboardData?.items;
-                                            if (!items) return;
-                                            for (const item of items) {
-                                                if (item.type.startsWith('image/')) {
-                                                    e.preventDefault();
-                                                    const file = item.getAsFile();
-                                                    const reader = new FileReader();
-                                                    reader.onload = ev => {
-                                                        const img = new Image();
-                                                        img.onload = () => setPastedImage({ data: ev.target.result, w: 540, h: null, x: 30, y: 155, naturalW: img.width, naturalH: img.height });
-                                                        img.src = ev.target.result;
-                                                    };
-                                                    reader.readAsDataURL(file);
-                                                    break;
-                                                }
-                                            }
-                                        }}
-                                    >
-                                        Clic aquí y Ctrl+V para pegar imagen
-                                    </div>
-                                ) : (<>
-                                    <div style={{position:'relative',borderRadius:'8px',overflow:'auto',border:'1px solid var(--border-main)',background:'white',maxHeight:'200px'}}>
-                                        <img src={pastedImage.data} style={{width: imgScale + '%',display:'block',padding:'4px'}} />
-                                        <button onClick={() => { setPastedImage(null); setImgScale(100); }} style={{position:'sticky',top:'4px',float:'right',marginRight:'4px',background:'var(--danger)',color:'white',border:'none',borderRadius:'50%',width:'20px',height:'20px',fontSize:'11px',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1,boxShadow:'0 2px 4px rgba(0,0,0,0.3)',zIndex:2}}>✕</button>
-                                    </div>
-                                    <div style={{display:'flex',alignItems:'center',gap:'0.5rem',marginTop:'0.4rem'}}>
-                                        <span className="mono" style={{fontSize:'0.6rem',color:'var(--text-muted)',minWidth:'28px'}}>{imgScale}%</span>
-                                        <input type="range" min="30" max="200" value={imgScale} onChange={e => setImgScale(Number(e.target.value))} style={{flex:1,accentColor:'var(--accent)',height:'4px',cursor:'pointer'}} />
-                                        <button onClick={() => setImgScale(100)} style={{background:'none',border:'1px solid var(--border-main)',borderRadius:'4px',color:'var(--text-muted)',fontSize:'0.55rem',fontFamily:'var(--font-mono)',padding:'2px 6px',cursor:'pointer'}}>Reset</button>
-                                    </div>
-                                </>)}
-                            </div>
 
 
                         </div>
