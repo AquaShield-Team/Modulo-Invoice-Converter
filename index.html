@@ -30,11 +30,12 @@
         /* ── Industrial Fusion: Light Theme (default) — Manual de Marca AquaChile ── */
         :root {
             --accent:#EB5F0A; --accent-glow:rgba(235,95,10,0.15); --accent-hover:#C76728; --accent-dim:rgba(235,95,10,0.08);
-            --bg-main:#F7FAFC; --bg-sidebar:#ffffff; --bg-card:rgba(255,255,255,0.95); --bg-card-hover:rgba(237,242,247,1); --bg-input:#ffffff;
-            --border-main:#E2E8F0; --border-hover:#B4A28D; --border-accent:rgba(235,95,10,0.3);
+            --bg-main:#F7FAFC; --bg-page:#F7FAFC; --bg-header:#FFFFFF; --bg-sidebar:#ffffff; --bg-card:rgba(255,255,255,0.95); --bg-card-hover:rgba(237,242,247,1); --bg-input:#ffffff; --bg-tertiary:#EDF2F7;
+            --border-main:#E2E8F0; --border-color:#E2E8F0; --border-hover:#B4A28D; --border-accent:rgba(235,95,10,0.3);
+            --color-separator:#B4A28D;
             --text-primary:#445563; --text-secondary:#8F9CA7; --text-muted:#8F9CA7;
             --secondary:#445563; --success:#6C8B8B; --danger:#C76728; --warning:#EB5F0A; --info:#445563;
-            --shadow-card:0 4px 20px rgba(0,0,0,0.06); --shadow-glow:0 0 20px rgba(235,95,10,0.1);
+            --shadow-card:0 4px 20px rgba(0,0,0,0.06); --shadow:0 2px 12px rgba(68,85,99,0.08); --shadow-glow:0 0 20px rgba(235,95,10,0.1);
             --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
             --font-heading:'Quicksand',sans-serif; --font-mono:'JetBrains Mono','Consolas',monospace;
             --transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
@@ -42,20 +43,22 @@
         /* ── Industrial Fusion: Dark Theme — Manual de Marca AquaChile ── */
         body.dark-theme {
             --accent-glow:rgba(235,95,10,0.25); --accent-dim:rgba(235,95,10,0.12);
-            --bg-main:#1E2D3B; --bg-sidebar:#1E2D3B; --bg-card:rgba(44,62,80,0.85); --bg-card-hover:rgba(54,72,90,0.95); --bg-input:#2C3E50;
-            --border-main:#334155; --border-hover:#445563;
+            --bg-main:#1E2D3B; --bg-page:#1E2D3B; --bg-header:#1E2D3B; --bg-sidebar:#1E2D3B; --bg-card:rgba(44,62,80,0.85); --bg-card-hover:rgba(54,72,90,0.95); --bg-input:#2C3E50; --bg-tertiary:#2C3E50;
+            --border-main:#334155; --border-color:#334155; --border-hover:#445563;
+            --color-separator:rgba(180,162,141,0.3);
             --text-primary:#E2E8F0; --text-secondary:#94A3B8; --text-muted:#94A3B8;
             --secondary:#445563; --success:#8AACAC; --danger:#C76728; --warning:#EB5F0A;
-            --shadow-card:none; --shadow-glow:0 0 30px rgba(235,95,10,0.15);
+            --shadow-card:none; --shadow:none; --shadow-glow:0 0 30px rgba(235,95,10,0.15);
         }
         *{margin:0;padding:0;box-sizing:border-box;}
         body{background:var(--bg-main);color:var(--text-primary);font-family:var(--font);display:flex;flex-direction:column;height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased;transition:background 0.4s ease,color 0.4s ease;}
         .mono{font-family:var(--font-mono);}
         .text-tiny{font-size:0.7rem;letter-spacing:0.04em;}
 
-        .workspace-header{height:80px;background:var(--bg-sidebar);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-main);flex-shrink:0;transition:var(--transition);}
+        .workspace-header{height:64px;background:var(--bg-sidebar);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-main);flex-shrink:0;transition:var(--transition);}
         .brand-logo{filter:none;transition:filter 0.3s ease;}
-        body.dark-theme .brand-logo{filter:invert(1) brightness(2);}
+        .logo-light{display:block;mix-blend-mode:multiply;} .logo-dark{display:none;}
+        body.dark-theme .logo-light{display:none;} body.dark-theme .logo-dark{display:block;}
         .card-enterprise{background:var(--bg-card);border:1px solid var(--border-main);border-radius:16px;box-shadow:var(--shadow-card);backdrop-filter:blur(12px);transition:var(--transition);}
         .drop-zone{padding:2rem;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px dashed var(--border-main);border-radius:12px;transition:var(--transition);cursor:pointer;}
         .drop-zone:hover,.drop-zone.dragging{border-color:var(--accent);background:var(--accent-dim);}
@@ -676,15 +679,16 @@
                 {/* ═══ HEADER ═══ */}
                 <header className="workspace-header">
                     <div style={{display:'flex',alignItems:'center',gap:'1rem'}}>
-                        <img src="logo_aquachile_dark.png" alt="AquaChile" className="brand-logo" style={{height:'44px',objectFit:'contain'}} />
+                        <img src="logo_aquachile_dark.png" alt="AquaChile" className="brand-logo logo-light" style={{height:'36px',objectFit:'contain'}} />
+                        <img src="logo_aquachile_white.png" alt="AquaChile" className="brand-logo logo-dark" style={{height:'36px',objectFit:'contain'}} />
                         <div style={{display:'flex',flexDirection:'column',lineHeight:'1.1'}}>
-                            <span style={{fontFamily:'var(--font-heading)',fontWeight:700,fontSize:'1.4rem',color:'var(--text-primary)',letterSpacing:'2px'}}>AQUASHIELD</span>
-                            <span style={{fontSize:'0.8rem',color:'var(--text-muted)'}}>by AquaChile</span>
+                            <span style={{fontFamily:'var(--font-heading)',fontWeight:700,fontSize:'1.35rem',color:'var(--text-primary)',letterSpacing:'2px'}}>AQUASHIELD</span>
+                            <span style={{fontSize:'0.7rem',color:'var(--text-muted)'}}>by AquaChile</span>
                         </div>
-                        <div style={{height:'32px',width:'1px',backgroundColor:'var(--border-main)',margin:'0 0.5rem'}}></div>
+                        <div style={{height:'32px',width:'1.5px',backgroundColor:'var(--color-separator)',margin:'0 0.5rem'}}></div>
                         <div style={{display:'flex',flexDirection:'column',lineHeight:'1.1',justifyContent:'center'}}>
-                            <span style={{fontFamily:'var(--font-heading)',fontWeight:600,fontSize:'0.75rem',color:'var(--accent)',letterSpacing:'2px',textTransform:'uppercase'}}>Módulo</span>
-                            <span style={{fontFamily:'var(--font-heading)',fontWeight:700,fontSize:'1.05rem',color:'var(--text-primary)',letterSpacing:'1px',textTransform:'uppercase'}}>{activeModule === 'invoice' ? 'Commercial Invoice' : 'Factura Mermas'}</span>
+                            <span style={{fontFamily:'var(--font-heading)',fontWeight:600,fontSize:'0.6rem',color:'var(--accent)',letterSpacing:'2px',textTransform:'uppercase'}}>Módulo</span>
+                            <span style={{fontFamily:'var(--font-heading)',fontWeight:700,fontSize:'1.15rem',color:'var(--text-primary)',letterSpacing:'1px',textTransform:'uppercase'}}>{activeModule === 'invoice' ? 'Commercial Invoice' : 'Factura Mermas'}</span>
                         </div>
                     </div>
                     <div style={{display:'flex',alignItems:'center',gap:'1rem'}}>
@@ -891,7 +895,7 @@
                                     </div>
                                     <div style={{display:'flex',alignItems:'center',gap:'0.5rem',marginTop:'0.4rem'}}>
                                         <span className="mono" style={{fontSize:'0.6rem',color:'var(--text-muted)',minWidth:'28px'}}>{imgScale}%</span>
-                                        <input type="range" min="30" max="200" value={imgScale} onChange={e => setImgScale(Number(e.target.value))} style={{flex:1,accentColor:'#9333EA',height:'4px',cursor:'pointer'}} />
+                                        <input type="range" min="30" max="200" value={imgScale} onChange={e => setImgScale(Number(e.target.value))} style={{flex:1,accentColor:'var(--accent)',height:'4px',cursor:'pointer'}} />
                                         <button onClick={() => setImgScale(100)} style={{background:'none',border:'1px solid var(--border-main)',borderRadius:'4px',color:'var(--text-muted)',fontSize:'0.55rem',fontFamily:'var(--font-mono)',padding:'2px 6px',cursor:'pointer'}}>Reset</button>
                                     </div>
                                 </>)}

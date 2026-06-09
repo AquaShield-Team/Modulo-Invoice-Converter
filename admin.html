@@ -38,7 +38,7 @@
     </script>
     <style>
         /* ── Industrial Fusion: Dark Theme (Admin) — Manual de Marca AquaChile ── */
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #1E2D3B; color: #f8fafc; margin: 0; -webkit-font-smoothing: antialiased; font-size: 16px; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #1E2D3B; color: #E2E8F0; margin: 0; -webkit-font-smoothing: antialiased; font-size: 16px; }
         .font-display { font-family: 'Quicksand', sans-serif; }
         .mono { font-family: 'JetBrains Mono', 'Consolas', monospace; }
         
@@ -56,7 +56,7 @@
         /* Inputs — Manual de Marca */
         .dark-input {
             background: #445563;
-            border: 1px solid #4a5a68;
+            border: 1px solid #334155;
             color: #f8fafc;
             border-radius: 6px;
             padding: 6px 8px;
@@ -72,7 +72,7 @@
         }
         .dark-input-color {
             background: #445563;
-            border: 1px solid #4a5a68;
+            border: 1px solid #334155;
             border-radius: 6px;
             width: 36px; height: 36px;
             padding: 2px;
@@ -81,7 +81,7 @@
 
         /* Toast */
         #toast-container{position:fixed;bottom:2rem;right:2rem;display:flex;flex-direction:column;gap:0.6rem;z-index:9999;pointer-events:none;}
-        .toast{pointer-events:auto;background:rgba(58,74,88,0.95);border:1px solid #4a5a68;border-left:4px solid #EB5F0A;padding:0.8rem 1.2rem;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.3);animation:toastIn 0.35s ease-out;font-size:0.8rem;font-family:'Inter',sans-serif;color:#f8fafc;display:flex;align-items:center;gap:0.6rem;max-width:380px;}
+        .toast{pointer-events:auto;background:rgba(58,74,88,0.95);border:1px solid #334155;border-left:4px solid #EB5F0A;padding:0.8rem 1.2rem;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.3);animation:toastIn 0.35s ease-out;font-size:0.8rem;font-family:'Inter',sans-serif;color:#f8fafc;display:flex;align-items:center;gap:0.6rem;max-width:380px;}
         .toast.toast-success{border-left-color:#6C8B8B;}
         .toast.toast-error{border-left-color:#C76728;}
         .toast.toast-warning{border-left-color:#EB5F0A;}
@@ -93,28 +93,28 @@
         .theme-toggle-btn{width:36px;height:36px;background:#445563;border:none;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;cursor:pointer;transition:all 0.3s ease;}
         .theme-toggle-btn:hover{background:#EB5F0A;}
         .admin-avatar{width:36px;height:36px;background:#445563;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;}
-        .admin-user-profile{display:flex;align-items:center;gap:0.6rem;padding-left:1rem;border-left:1px solid #4a5a68;height:24px;}
+        .admin-user-profile{display:flex;align-items:center;gap:0.6rem;padding-left:1rem;border-left:1px solid #334155;height:24px;}
 
         /* Module tabs */
-        .module-tabs{display:flex;gap:0;background:#1E2D3B;border-bottom:1px solid #4a5a68;flex-shrink:0;padding:0 1.5rem;}
-        .module-tab{padding:0.6rem 1.5rem;font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#8fa0b0;cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;transition:all 0.3s ease;}
+        .module-tabs{display:flex;gap:0;background:#1E2D3B;border-bottom:1px solid #334155;flex-shrink:0;padding:0 1.5rem;}
+        .module-tab{padding:0.6rem 1.5rem;font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.75rem;text-transform:uppercase;letter-spacing:1.5px;color:#94A3B8;cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;transition:all 0.3s ease;}
         .module-tab:hover{color:#f8fafc;}
         .module-tab.active{color:#EB5F0A;border-bottom-color:#EB5F0A;}
 
         /* Mermas styles */
         .mermas-tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:0.75rem;}
-        .mermas-tbl thead th{background:#2C3E50;color:#8fa0b0;padding:0.6rem 0.8rem;text-align:left;font-weight:700;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #EB5F0A;position:sticky;top:0;z-index:1;font-family:'Quicksand',sans-serif;}
-        .mermas-tbl tbody td{padding:0.5rem 0.8rem;border-bottom:1px solid #4a5a68;transition:all 0.2s;vertical-align:middle;}
+        .mermas-tbl thead th{background:#2C3E50;color:#94A3B8;padding:0.6rem 0.8rem;text-align:left;font-weight:700;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #EB5F0A;position:sticky;top:0;z-index:1;font-family:'Quicksand',sans-serif;}
+        .mermas-tbl tbody td{padding:0.5rem 0.8rem;border-bottom:1px solid #334155;transition:all 0.2s;vertical-align:middle;}
         .mermas-tbl tbody tr:hover td{background:rgba(68,85,99,0.5);}
         .mermas-tbl tfoot td{padding:0.7rem 0.8rem;font-weight:700;border-top:2px solid #EB5F0A;font-family:'Quicksand',sans-serif;font-size:0.85rem;}
         .m-cajas-input{width:70px;background:rgba(235,95,10,0.12);border:1px solid #EB5F0A;border-radius:6px;padding:4px 8px;color:#EB5F0A;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:0.8rem;text-align:center;outline:none;transition:all 0.2s;}
         .m-cajas-input:focus{box-shadow:0 0 0 3px rgba(235,95,10,0.25);}
         .m-changed{color:#EB5F0A;font-weight:700;}
-        .m-original{color:#8fa0b0;text-decoration:line-through;font-size:0.65rem;margin-left:4px;}
-        .m-stat-card{background:rgba(58,74,88,0.85);border:1px solid #4a5a68;border-radius:12px;padding:0.8rem;display:flex;flex-direction:column;gap:0.2rem;transition:all 0.3s;}
+        .m-original{color:#94A3B8;text-decoration:line-through;font-size:0.65rem;margin-left:4px;}
+        .m-stat-card{background:rgba(58,74,88,0.85);border:1px solid #334155;border-radius:12px;padding:0.8rem;display:flex;flex-direction:column;gap:0.2rem;transition:all 0.3s;}
         .m-stat-card:hover{border-color:#EB5F0A;box-shadow:0 0 30px rgba(235,95,10,0.15);}
-        .m-preview-panel{background:rgba(58,74,88,0.85);border:1px solid #4a5a68;border-radius:12px;display:flex;flex-direction:column;overflow:hidden;}
-        .m-preview-header{padding:0.6rem 1rem;background:#3a4a58;border-bottom:1px solid #4a5a68;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+        .m-preview-panel{background:rgba(58,74,88,0.85);border:1px solid #334155;border-radius:12px;display:flex;flex-direction:column;overflow:hidden;}
+        .m-preview-header{padding:0.6rem 1rem;background:#3a4a58;border-bottom:1px solid #334155;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
         .m-preview-wrap{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:1rem;background:rgba(0,0,0,0.15);}
         .m-preview-wrap canvas{box-shadow:0 4px 20px rgba(0,0,0,0.4);border-radius:4px;}
         .m-zoom-btn{background:#445563;border:none;color:#f8fafc;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:1rem;font-weight:700;transition:all 0.3s;display:flex;align-items:center;justify-content:center;}
@@ -763,17 +763,17 @@
             return (
                 <div className="h-screen flex flex-col overflow-hidden">
                     {/* ═══ HEADER: Manual de Marca AquaChile ═══ */}
-                    <header style={{height:'80px', background:'#1E2D3B', padding:'0 2rem', display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid #4a5a68', flexShrink:0}}>
+                    <header style={{height:'64px', background:'#1E2D3B', padding:'0 2rem', display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid #334155', flexShrink:0}}>
                         <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
-                            <img src="logo_aquachile_dark.png" alt="AquaChile" style={{height:'44px', objectFit:'contain', filter:'invert(1) brightness(2)'}}/>
+                            <img src="logo_aquachile_white.png" alt="AquaChile" style={{height:'36px', objectFit:'contain'}}/>
                             <div style={{display:'flex', flexDirection:'column', lineHeight:'1.1'}}>
-                                <span style={{fontFamily:'Quicksand, sans-serif', fontWeight:700, fontSize:'1.4rem', color:'#f8fafc', letterSpacing:'2px'}}>AQUASHIELD</span>
-                                <span style={{fontSize:'0.8rem', color:'#8fa0b0'}}>by AquaChile</span>
+                                <span style={{fontFamily:'Quicksand, sans-serif', fontWeight:700, fontSize:'1.35rem', color:'#f8fafc', letterSpacing:'2px'}}>AQUASHIELD</span>
+                                <span style={{fontSize:'0.7rem', color:'#94A3B8'}}>by AquaChile</span>
                             </div>
-                            <div style={{height:'32px', width:'1px', backgroundColor:'#4a5a68', margin:'0 0.5rem'}}></div>
+                            <div style={{height:'32px', width:'1.5px', backgroundColor:'rgba(180,162,141,0.3)', margin:'0 0.5rem'}}></div>
                             <div style={{display:'flex', flexDirection:'column', lineHeight:'1.1', justifyContent:'center'}}>
-                                <span style={{fontFamily:'Quicksand, sans-serif', fontWeight:600, fontSize:'0.75rem', color:'#EB5F0A', letterSpacing:'2px', textTransform:'uppercase'}}>Módulo</span>
-                                <span style={{fontFamily:'Quicksand, sans-serif', fontWeight:700, fontSize:'1.05rem', color:'#f8fafc', letterSpacing:'1px', textTransform:'uppercase'}}>{activeModule === 'invoice' ? 'Commercial Invoice' : 'Factura Mermas'}</span>
+                                <span style={{fontFamily:'Quicksand, sans-serif', fontWeight:600, fontSize:'0.6rem', color:'#EB5F0A', letterSpacing:'2px', textTransform:'uppercase'}}>Módulo</span>
+                                <span style={{fontFamily:'Quicksand, sans-serif', fontWeight:700, fontSize:'1.15rem', color:'#f8fafc', letterSpacing:'1px', textTransform:'uppercase'}}>{activeModule === 'invoice' ? 'Commercial Invoice' : 'Factura Mermas'}</span>
                             </div>
                             <span style={{background:'#EB5F0A', color:'white', fontSize:'10px', fontWeight:700, padding:'3px 10px', borderRadius:'20px', letterSpacing:'1.5px', textTransform:'uppercase', fontFamily:'Quicksand, sans-serif', marginLeft:'0.5rem'}}>ADMIN</span>
                         </div>
@@ -783,7 +783,7 @@
                                 <SaveIcon size={14}/> <span>Guardar Config</span>
                             </button>
                             <div className="admin-user-profile">
-                                <span className="mono" style={{fontSize:'0.7rem', fontWeight:600, color:'#8fa0b0'}}>ADMIN Marcelo Ramírez</span>
+                                <span className="mono" style={{fontSize:'0.7rem', fontWeight:600, color:'#94A3B8'}}>ADMIN Marcelo Ramírez</span>
                                 <div className="admin-avatar"><UserIcon size={16}/></div>
                             </div>
                         </div>
@@ -799,9 +799,9 @@
                     {activeModule === 'invoice' && <>
 
                     {/* ═══ PROFILE TOOLBAR ═══ */}
-                    <div style={{display:'flex',alignItems:'center',gap:'0.6rem',padding:'0.5rem 1.5rem',background:'#1E2D3B',borderBottom:'1px solid #4a5a68',flexShrink:0}}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8fa0b0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                        <span className="mono" style={{fontSize:'0.65rem',color:'#8fa0b0',fontWeight:700,textTransform:'uppercase'}}>Plantilla:</span>
+                    <div style={{display:'flex',alignItems:'center',gap:'0.6rem',padding:'0.5rem 1.5rem',background:'#1E2D3B',borderBottom:'1px solid #334155',flexShrink:0}}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                        <span className="mono" style={{fontSize:'0.65rem',color:'#94A3B8',fontWeight:700,textTransform:'uppercase'}}>Plantilla:</span>
                         {editingProfileName ? (
                             <input
                                 autoFocus
@@ -815,20 +815,20 @@
                             <select
                                 value={profiles.activeId || ''}
                                 onChange={e => switchProfile(e.target.value)}
-                                style={{flex:'0 1 auto',minWidth:'180px',padding:'4px 8px',borderRadius:'6px',border:'1px solid #4a5a68',background:'#445563',color:'#f8fafc',fontFamily:'Quicksand, sans-serif',fontWeight:600,fontSize:'0.75rem',cursor:'pointer',outline:'none'}}
+                                style={{flex:'0 1 auto',minWidth:'180px',padding:'4px 8px',borderRadius:'6px',border:'1px solid #334155',background:'#445563',color:'#f8fafc',fontFamily:'Quicksand, sans-serif',fontWeight:600,fontSize:'0.75rem',cursor:'pointer',outline:'none'}}
                             >
                                 {profiles.profiles.map(p => (
                                     <option key={p.id} value={p.id}>{p.name}</option>
                                 ))}
                             </select>
                         )}
-                        <button onClick={() => setEditingProfileName(!editingProfileName)} title="Renombrar" style={{background:'none',border:'none',color:'#8fa0b0',cursor:'pointer',padding:'2px',display:'flex'}}>
+                        <button onClick={() => setEditingProfileName(!editingProfileName)} title="Renombrar" style={{background:'none',border:'none',color:'#94A3B8',cursor:'pointer',padding:'2px',display:'flex'}}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         </button>
-                        <button onClick={handleCreateProfile} title="Nuevo perfil" style={{background:'none',border:'1px solid #4a5a68',borderRadius:'6px',color:'#6C8B8B',cursor:'pointer',padding:'3px 8px',fontSize:'0.65rem',fontFamily:'Quicksand, sans-serif',fontWeight:700,display:'flex',alignItems:'center',gap:'3px'}}>
+                        <button onClick={handleCreateProfile} title="Nuevo perfil" style={{background:'none',border:'1px solid #334155',borderRadius:'6px',color:'#6C8B8B',cursor:'pointer',padding:'3px 8px',fontSize:'0.65rem',fontFamily:'Quicksand, sans-serif',fontWeight:700,display:'flex',alignItems:'center',gap:'3px'}}>
                             <PlusIcon size={10}/> Nuevo
                         </button>
-                        <button onClick={handleDeleteProfile} disabled={profiles.profiles.length <= 1} title="Eliminar perfil activo" style={{background:'none',border:'1px solid #4a5a68',borderRadius:'6px',color: profiles.profiles.length <= 1 ? '#4a5a68' : '#C76728',cursor: profiles.profiles.length <= 1 ? 'not-allowed' : 'pointer',padding:'3px 8px',fontSize:'0.65rem',fontFamily:'Quicksand, sans-serif',fontWeight:700,display:'flex',alignItems:'center',gap:'3px'}}>
+                        <button onClick={handleDeleteProfile} disabled={profiles.profiles.length <= 1} title="Eliminar perfil activo" style={{background:'none',border:'1px solid #334155',borderRadius:'6px',color: profiles.profiles.length <= 1 ? '#334155' : '#C76728',cursor: profiles.profiles.length <= 1 ? 'not-allowed' : 'pointer',padding:'3px 8px',fontSize:'0.65rem',fontFamily:'Quicksand, sans-serif',fontWeight:700,display:'flex',alignItems:'center',gap:'3px'}}>
                             <TrashIcon size={10}/> Eliminar
                         </button>
                     </div>
@@ -842,7 +842,7 @@
                                 <div className="flex-1 flex items-center justify-center p-8">
                                     <div 
                                         className={"border-2 border-dashed rounded-2xl p-16 text-center cursor-pointer transition-all w-full max-w-lg " +
-                                            (isDragging ? 'border-brand-accent bg-brand-accent/10 scale-105' : 'border-[#4a5a68] hover:border-brand-accent/50 hover:bg-[#3a4a58]')}
+                                            (isDragging ? 'border-brand-accent bg-brand-accent/10 scale-105' : 'border-[#334155] hover:border-brand-accent/50 hover:bg-[#3a4a58]')}
                                         onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
                                         onDragLeave={() => setIsDragging(false)}
                                         onDrop={e => { e.preventDefault(); setIsDragging(false); loadFile(e.dataTransfer.files); }}
@@ -861,10 +861,10 @@
                             ) : (
                                 <div className="flex-1 flex flex-col min-h-0">
                                     {/* Toolbar de preview */}
-                                    <div className="flex items-center justify-between px-4 py-2 bg-[#3a4a58] border-b border-[#4a5a68]">
+                                    <div className="flex items-center justify-between px-4 py-2 bg-[#3a4a58] border-b border-[#334155]">
                                         <div className="flex items-center space-x-3">
                                             <span className="text-gray-400 text-xs font-mono">{pdfFileName}</span>
-                                            {multipleFiles.length > 1 && <span className="bg-blue-900/50 text-blue-300 text-[10px] px-2 py-0.5 rounded-full font-bold">+{multipleFiles.length - 1} más</span>}
+                                            {multipleFiles.length > 1 && <span className="bg-[rgba(68,85,99,0.5)] text-[#94A3B8] text-[10px] px-2 py-0.5 rounded-full font-bold">+{multipleFiles.length - 1} más</span>}
                                             {isRendering && <span className="text-brand-accent text-[10px] font-bold animate-pulse">⟳ Actualizando...</span>}
                                         </div>
                                         <div className="flex items-center space-x-3">
@@ -890,7 +890,7 @@
                                     <div ref={previewContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden bg-[#1E2D3B] p-4" onClick={() => setSelectedOpId(null)}>
                                         <div style={{display: 'flex', justifyContent: 'center'}}>
                                             <div className="relative" style={{cursor: dragState ? 'grabbing' : 'default'}}>
-                                                <canvas ref={canvasRef} className="rounded-lg shadow-2xl border border-[#4a5a68] block" />
+                                                <canvas ref={canvasRef} className="rounded-lg shadow-2xl border border-[#334155] block" />
                                             {/* Interactive overlay for operations */}
                                             {previewReady && operations.map(op => {
                                                 const rect = getScreenRect(op);
@@ -965,7 +965,7 @@
                                         </div>
                                     </div>
                                     {/* Botón de procesar */}
-                                    <div className="px-4 py-3 bg-[#3a4a58] border-t border-[#4a5a68] flex items-center space-x-3">
+                                    <div className="px-4 py-3 bg-[#3a4a58] border-t border-[#334155] flex items-center space-x-3">
                                         <button onClick={processBatch} disabled={isProcessing} className={"flex-1 py-3 rounded-xl font-bold text-white font-display transition-all flex items-center justify-center space-x-2 " + (isProcessing ? 'bg-gray-600 cursor-not-allowed' : 'bg-brand-accent hover:bg-[#C76728] shadow-lg glow-accent')}>
                                             {isProcessing ? (
                                                 <><svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg><span>Procesando...</span></>
@@ -984,18 +984,18 @@
                         </div>
 
                         {/* ── Panel Derecho: Capas / Operaciones ── */}
-                        <div className="w-[380px] flex-shrink-0 flex flex-col bg-[#3a4a58] border-l border-[#4a5a68] overflow-hidden">
+                        <div className="w-[380px] flex-shrink-0 flex flex-col bg-[#3a4a58] border-l border-[#334155] overflow-hidden">
                             {/* Header del panel */}
-                            <div className="px-5 py-4 border-b border-[#4a5a68] flex-shrink-0">
+                            <div className="px-5 py-4 border-b border-[#334155] flex-shrink-0">
                                 <h2 className="font-display font-bold text-white text-lg mb-3">Capas de Edición</h2>
                                 <div className="flex space-x-2">
-                                    <button onClick={addRect} className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#4a5a68] text-white py-2.5 rounded-lg text-xs font-bold transition-all border border-[#4a5a68] hover:border-brand-accent/50">
+                                    <button onClick={addRect} className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#334155] text-white py-2.5 rounded-lg text-xs font-bold transition-all border border-[#334155] hover:border-brand-accent/50">
                                         <PlusIcon size={12}/> <span>Recuadro</span>
                                     </button>
-                                    <button onClick={addText} className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#4a5a68] text-white py-2.5 rounded-lg text-xs font-bold transition-all border border-[#4a5a68] hover:border-brand-accent/50">
+                                    <button onClick={addText} className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#334155] text-white py-2.5 rounded-lg text-xs font-bold transition-all border border-[#334155] hover:border-brand-accent/50">
                                         <PlusIcon size={12}/> <span>Texto</span>
                                     </button>
-                                    <button onClick={addNotes} className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#4a5a68] text-[#EB5F0A] py-2.5 rounded-lg text-xs font-bold transition-all border border-[#4a5a68] hover:border-[#EB5F0A]/50">
+                                    <button onClick={addNotes} className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#334155] text-[#EB5F0A] py-2.5 rounded-lg text-xs font-bold transition-all border border-[#334155] hover:border-[#EB5F0A]/50">
                                         <PlusIcon size={12}/> <span>Notas</span>
                                     </button>
                                 </div>
@@ -1003,7 +1003,7 @@
                                     <div
                                         tabIndex={0}
                                         onPaste={pasteImage}
-                                        className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#4a5a68] text-purple-300 py-2.5 rounded-lg text-xs font-bold transition-all border border-dashed border-[#4a5a68] hover:border-purple-400/50 cursor-text outline-none focus:border-purple-400"
+                                        className="flex-1 flex items-center justify-center space-x-1 bg-[#445563] hover:bg-[#334155] text-[#B4A28D] py-2.5 rounded-lg text-xs font-bold transition-all border border-dashed border-[#334155] hover:border-[rgba(180,162,141,0.5)] cursor-text outline-none focus:border-[#B4A28D]"
                                     >
                                         <PlusIcon size={12}/> <span>📎 Ctrl+V pegar imagen</span>
                                     </div>
@@ -1033,7 +1033,7 @@
                             </div>
 
                             {/* Footer */}
-                            <div className="px-5 py-3 border-t border-[#4a5a68] flex-shrink-0">
+                            <div className="px-5 py-3 border-t border-[#334155] flex-shrink-0">
                                 <p className="text-[11px] text-gray-600 text-center">{operations.length} capa(s) activas · Los cambios se previsualizan automáticamente</p>
                             </div>
                         </div>
@@ -1047,7 +1047,7 @@
                             /* Dropzone */
                             <div className="flex-1 flex items-center justify-center">
                                 <div
-                                    className={"border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all w-full max-w-lg " + (mIsDragging ? 'border-brand-accent bg-brand-accent/10 scale-105' : 'border-[#4a5a68] hover:border-brand-accent/50 hover:bg-[#3a4a58]')}
+                                    className={"border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all w-full max-w-lg " + (mIsDragging ? 'border-brand-accent bg-brand-accent/10 scale-105' : 'border-[#334155] hover:border-brand-accent/50 hover:bg-[#3a4a58]')}
                                     onDragOver={e => { e.preventDefault(); setMIsDragging(true); }}
                                     onDragLeave={() => setMIsDragging(false)}
                                     onDrop={e => { e.preventDefault(); setMIsDragging(false); if(e.dataTransfer.files[0]) loadMermasPDF(e.dataTransfer.files[0]); }}
@@ -1071,15 +1071,15 @@
                             <div style={{flex: mShowPreview ? '0 0 55%' : '1', display:'flex', flexDirection:'column', gap:'0.8rem', overflow:'hidden'}}>
                                 {/* Stats */}
                                 <div className="flex gap-3" style={{flexShrink:0}}>
-                                    <div className="m-stat-card flex-1"><span style={{fontSize:'0.6rem',color:'#8fa0b0',fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',fontFamily:'Quicksand,sans-serif'}}>Archivo</span><span className="mono" style={{fontSize:'0.7rem',color:'#e4e6eb',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{mFileName}</span></div>
-                                    <div className="m-stat-card flex-1"><span style={{fontSize:'0.6rem',color:'#8fa0b0',fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',fontFamily:'Quicksand,sans-serif'}}>Productos</span><span className="mono" style={{fontSize:'1.2rem',fontWeight:800,color:'#8AACAC'}}>{mProducts.length}</span></div>
-                                    <div className="m-stat-card flex-1"><span style={{fontSize:'0.6rem',color:'#8fa0b0',fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',fontFamily:'Quicksand,sans-serif'}}>Cajas Original</span><span className="mono" style={{fontSize:'1.2rem',fontWeight:800}}>{mTotalCajasOrig.toLocaleString()}</span></div>
-                                    <div className="m-stat-card flex-1"><span style={{fontSize:'0.6rem',color:'#8fa0b0',fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',fontFamily:'Quicksand,sans-serif'}}>Cajas Merma</span><span className="mono" style={{fontSize:'1.2rem',fontWeight:800,color: mHasChanges ? '#EB5F0A' : '#f8fafc'}}>{mTotalCajasNew.toLocaleString()}</span></div>
-                                    <div className="m-stat-card flex-1"><span style={{fontSize:'0.6rem',color:'#8fa0b0',fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',fontFamily:'Quicksand,sans-serif'}}>Diferencia</span><span className="mono" style={{fontSize:'1.2rem',fontWeight:800,color: mTotalCajasNew < mTotalCajasOrig ? '#C76728' : '#6C8B8B'}}>{mTotalCajasNew - mTotalCajasOrig}</span></div>
-                                    <div className="m-stat-card" style={{flex:'1.3'}}><span style={{fontSize:'0.6rem',color:'#8fa0b0',fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',fontFamily:'Quicksand,sans-serif'}}>Nuevo Total</span><span className="mono" style={{fontSize:'1.2rem',fontWeight:800,color: mHasChanges ? '#EB5F0A' : '#f8fafc'}}>${mFmtNum(mNewGrandTotal)}</span></div>
+                                    <div className="m-stat-card flex-1"><span style={{fontSize:'0.6rem',color:'#94A3B8',fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',fontFamily:'Quicksand,sans-serif'}}>Archivo</span><span className="mono" style={{fontSize:'0.7rem',color:'#e4e6eb',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{mFileName}</span></div>
+                                    <div className="m-stat-card flex-1"><span style={{fontSize:'0.6rem',color:'#94A3B8',fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',fontFamily:'Quicksand,sans-serif'}}>Productos</span><span className="mono" style={{fontSize:'1.2rem',fontWeight:800,color:'#8AACAC'}}>{mProducts.length}</span></div>
+                                    <div className="m-stat-card flex-1"><span style={{fontSize:'0.6rem',color:'#94A3B8',fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',fontFamily:'Quicksand,sans-serif'}}>Cajas Original</span><span className="mono" style={{fontSize:'1.2rem',fontWeight:800}}>{mTotalCajasOrig.toLocaleString()}</span></div>
+                                    <div className="m-stat-card flex-1"><span style={{fontSize:'0.6rem',color:'#94A3B8',fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',fontFamily:'Quicksand,sans-serif'}}>Cajas Merma</span><span className="mono" style={{fontSize:'1.2rem',fontWeight:800,color: mHasChanges ? '#EB5F0A' : '#f8fafc'}}>{mTotalCajasNew.toLocaleString()}</span></div>
+                                    <div className="m-stat-card flex-1"><span style={{fontSize:'0.6rem',color:'#94A3B8',fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',fontFamily:'Quicksand,sans-serif'}}>Diferencia</span><span className="mono" style={{fontSize:'1.2rem',fontWeight:800,color: mTotalCajasNew < mTotalCajasOrig ? '#C76728' : '#6C8B8B'}}>{mTotalCajasNew - mTotalCajasOrig}</span></div>
+                                    <div className="m-stat-card" style={{flex:'1.3'}}><span style={{fontSize:'0.6rem',color:'#94A3B8',fontWeight:700,textTransform:'uppercase',letterSpacing:'1px',fontFamily:'Quicksand,sans-serif'}}>Nuevo Total</span><span className="mono" style={{fontSize:'1.2rem',fontWeight:800,color: mHasChanges ? '#EB5F0A' : '#f8fafc'}}>${mFmtNum(mNewGrandTotal)}</span></div>
                                 </div>
                                 {/* Table */}
-                                <div style={{flex:1,overflow:'auto',borderRadius:'12px',border:'1px solid #4a5a68',background:'rgba(58,74,88,0.85)'}}>
+                                <div style={{flex:1,overflow:'auto',borderRadius:'12px',border:'1px solid #334155',background:'rgba(58,74,88,0.85)'}}>
                                     <table className="mermas-tbl">
                                         <thead><tr>
                                             <th style={{width:'80px'}}>Código</th>
@@ -1095,7 +1095,7 @@
                                                     <td className="mono" style={{fontWeight:600}}>{p.code}</td>
                                                     <td><input type="number" className="m-cajas-input" value={p.newCajas} min="0" onChange={e => updateMCajas(p.id, e.target.value)} />{p.changed && <span className="m-original">{p.originalCajas}</span>}</td>
                                                     <td className="mono"><span className={p.changed ? 'm-changed' : ''}>{mFmtNum(p.newQuantity)} {p.qtyUnit}</span>{p.changed && <span className="m-original">{mFmtNum(p.originalQuantity)}</span>}</td>
-                                                    <td className="mono" style={{fontSize:'0.65rem',color:'#8fa0b0'}}>{mFmtNum(p.qtyPerBox, 3)}</td>
+                                                    <td className="mono" style={{fontSize:'0.65rem',color:'#94A3B8'}}>{mFmtNum(p.qtyPerBox, 3)}</td>
                                                     <td className="mono" style={{fontSize:'0.65rem'}}>{mFmtNum(p.unitValue, 4)}</td>
                                                     <td className="mono" style={{textAlign:'right',fontWeight:700}}><span className={p.changed ? 'm-changed' : ''}>${mFmtNum(p.newTotal)}</span>{p.changed && <span className="m-original">${mFmtNum(p.originalTotal)}</span>}</td>
                                                 </tr>
@@ -1113,11 +1113,11 @@
                                 {/* Actions */}
                                 <div className="flex justify-between items-center" style={{flexShrink:0}}>
                                     <div className="flex gap-2">
-                                        <button onClick={() => {setMPdfBytes(null); setMProducts([]); setMFileName('');}} className="flex items-center gap-1 bg-[#445563] hover:bg-[#4a5a68] text-white py-2 px-4 rounded-lg text-xs font-bold transition-all border border-[#4a5a68]">↩ Cambiar PDF</button>
-                                        <button onClick={resetMermas} disabled={!mHasChanges} className="flex items-center gap-1 bg-[#445563] hover:bg-[#4a5a68] text-white py-2 px-4 rounded-lg text-xs font-bold transition-all border border-[#4a5a68] disabled:opacity-40">↺ Restaurar</button>
+                                        <button onClick={() => {setMPdfBytes(null); setMProducts([]); setMFileName('');}} className="flex items-center gap-1 bg-[#445563] hover:bg-[#334155] text-white py-2 px-4 rounded-lg text-xs font-bold transition-all border border-[#334155]">↩ Cambiar PDF</button>
+                                        <button onClick={resetMermas} disabled={!mHasChanges} className="flex items-center gap-1 bg-[#445563] hover:bg-[#334155] text-white py-2 px-4 rounded-lg text-xs font-bold transition-all border border-[#334155] disabled:opacity-40">↺ Restaurar</button>
                                     </div>
                                     <div className="flex gap-2">
-                                        <button onClick={() => setMShowPreview(!mShowPreview)} className="flex items-center gap-1 bg-[#445563] hover:bg-[#4a5a68] text-white py-2 px-4 rounded-lg text-xs font-bold transition-all border border-[#4a5a68]">{mShowPreview ? '◧ Ocultar Preview' : '◫ Mostrar Preview'}</button>
+                                        <button onClick={() => setMShowPreview(!mShowPreview)} className="flex items-center gap-1 bg-[#445563] hover:bg-[#334155] text-white py-2 px-4 rounded-lg text-xs font-bold transition-all border border-[#334155]">{mShowPreview ? '◧ Ocultar Preview' : '◫ Mostrar Preview'}</button>
                                         <button onClick={downloadMermasPDF} disabled={!mHasChanges || mIsProcessing} className={'flex items-center gap-2 py-2.5 px-5 rounded-xl font-bold text-white font-display transition-all ' + (!mHasChanges || mIsProcessing ? 'bg-gray-600 cursor-not-allowed' : 'bg-brand-accent hover:bg-[#C76728] shadow-lg glow-accent')}>{mIsProcessing ? '⟳ Generando...' : '⬇ Generar PDF Merma'}</button>
                                     </div>
                                 </div>
@@ -1126,10 +1126,10 @@
                             {mShowPreview && (
                                 <div className="m-preview-panel" style={{flex:'0 0 44%'}}>
                                     <div className="m-preview-header">
-                                        <span style={{fontFamily:'Quicksand,sans-serif',fontWeight:700,fontSize:'0.75rem',textTransform:'uppercase',letterSpacing:'1px',color:'#8fa0b0'}}>📄 Vista Previa</span>
+                                        <span style={{fontFamily:'Quicksand,sans-serif',fontWeight:700,fontSize:'0.75rem',textTransform:'uppercase',letterSpacing:'1px',color:'#94A3B8'}}>📄 Vista Previa</span>
                                         <div className="flex items-center gap-1">
                                             <button className="m-zoom-btn" onClick={() => setMPreviewScale(s => Math.max(0.5, s - 0.2))}>−</button>
-                                            <span className="mono" style={{fontSize:'0.65rem',color:'#8fa0b0',minWidth:'35px',textAlign:'center'}}>{Math.round(mPreviewScale*100)}%</span>
+                                            <span className="mono" style={{fontSize:'0.65rem',color:'#94A3B8',minWidth:'35px',textAlign:'center'}}>{Math.round(mPreviewScale*100)}%</span>
                                             <button className="m-zoom-btn" onClick={() => setMPreviewScale(s => Math.min(3, s + 0.2))}>+</button>
                                         </div>
                                     </div>
@@ -1156,7 +1156,7 @@
             const dotColor = isImage ? 'bg-[#B4A28D]' : (isRect ? 'bg-[#C76728]' : (isNotes ? 'bg-[#EB5F0A]' : 'bg-[#6C8B8B]'));
 
             return (
-                <div className="layer-card bg-[#3a4a58] rounded-lg border border-[#4a5a68] overflow-hidden hover:border-[#5a6a78] transition-colors">
+                <div className="layer-card bg-[#3a4a58] rounded-lg border border-[#334155] overflow-hidden hover:border-[#5a6a78] transition-colors">
                     {/* Header de la capa */}
                     <div className="flex items-center justify-between px-3 py-2 bg-[#3a4a58] cursor-pointer" onClick={() => setCollapsed(!collapsed)}>
                         <div className="flex items-center space-x-2 flex-1 min-w-0">
@@ -1172,7 +1172,7 @@
                         <div className="flex items-center space-x-1 flex-shrink-0 ml-2">
                             <button onClick={e => { e.stopPropagation(); onMove(index, -1); }} disabled={index === 0} className="p-1 text-gray-500 hover:text-white disabled:opacity-20 transition-colors" title="Mover arriba">▲</button>
                             <button onClick={e => { e.stopPropagation(); onMove(index, 1); }} disabled={index === total - 1} className="p-1 text-gray-500 hover:text-white disabled:opacity-20 transition-colors" title="Mover abajo">▼</button>
-                            <button onClick={e => { e.stopPropagation(); onDuplicate(op); }} className="p-1 text-gray-500 hover:text-blue-400 transition-colors" title="Duplicar"><CopyIcon size={13}/></button>
+                            <button onClick={e => { e.stopPropagation(); onDuplicate(op); }} className="p-1 text-gray-500 hover:text-[#EB5F0A] transition-colors" title="Duplicar"><CopyIcon size={13}/></button>
                             <button onClick={e => { e.stopPropagation(); onRemove(op.id); }} className="p-1 text-gray-500 hover:text-[#C76728] transition-colors" title="Eliminar"><TrashIcon size={13}/></button>
                             <span className="text-gray-600 text-xs ml-1">{collapsed ? '▸' : '▾'}</span>
                         </div>

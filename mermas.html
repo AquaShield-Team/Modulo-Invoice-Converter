@@ -39,8 +39,8 @@
         ::-webkit-scrollbar{width:6px;} ::-webkit-scrollbar-track{background:var(--bg-main);} ::-webkit-scrollbar-thumb{background:var(--secondary);border-radius:3px;} ::-webkit-scrollbar-thumb:hover{background:var(--accent);}
 
         /* Header */
-        .workspace-header{height:56px;background:var(--bg-sidebar);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-main);flex-shrink:0;}
-        .brand-logo{height:32px;object-fit:contain;}
+        .workspace-header{height:64px;background:var(--bg-sidebar);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-main);flex-shrink:0;}
+        .brand-logo{height:36px;object-fit:contain;}
 
         /* Dropzone */
         .dropzone{border:2px dashed var(--border-main);border-radius:16px;padding:3rem;text-align:center;cursor:pointer;transition:var(--transition);background:var(--bg-card);}
@@ -494,15 +494,15 @@
                     {/* ═══ HEADER ═══ */}
                     <header className="workspace-header">
                         <div style={{display:'flex',alignItems:'center',gap:'1rem'}}>
-                            <img src="logo_aquachile_dark.png" alt="AquaChile" className="brand-logo" />
+                            <img src="logo_aquachile_white.png" alt="AquaChile" className="brand-logo" />
                             <div style={{display:'flex',flexDirection:'column',lineHeight:'1.1'}}>
-                                <span style={{fontFamily:'var(--font-heading)',fontWeight:700,fontSize:'1.3rem',letterSpacing:'2px'}}>AQUASHIELD</span>
-                                <span style={{fontSize:'0.75rem',color:'var(--text-muted)'}}>by AquaChile</span>
+                                <span style={{fontFamily:'var(--font-heading)',fontWeight:700,fontSize:'1.35rem',letterSpacing:'1.5px',color:'var(--text-primary)'}}>AQUASHIELD</span>
+                                <span style={{fontSize:'0.7rem',color:'var(--text-secondary)'}}>by AquaChile</span>
                             </div>
-                            <div style={{height:'28px',width:'1px',backgroundColor:'var(--border-main)',margin:'0 0.3rem'}}></div>
+                            <div style={{height:'32px',width:'1.5px',backgroundColor:'var(--border-main)',margin:'0 0.3rem'}}></div>
                             <div style={{display:'flex',flexDirection:'column',lineHeight:'1.1'}}>
-                                <span style={{fontFamily:'var(--font-heading)',fontWeight:600,fontSize:'0.7rem',color:'var(--accent)',letterSpacing:'2px',textTransform:'uppercase'}}>Módulo</span>
-                                <span style={{fontFamily:'var(--font-heading)',fontWeight:700,fontSize:'1rem',letterSpacing:'1px',textTransform:'uppercase'}}>Factura Mermas</span>
+                                <span style={{fontFamily:'var(--font-heading)',fontWeight:700,fontSize:'0.6rem',color:'var(--accent)',letterSpacing:'2.5px',textTransform:'uppercase'}}>Módulo</span>
+                                <span style={{fontFamily:'var(--font-heading)',fontWeight:800,fontSize:'1.15rem',color:'var(--text-primary)',letterSpacing:'1px',textTransform:'uppercase'}}>Factura Mermas</span>
                             </div>
                         </div>
                         <div style={{display:'flex',alignItems:'center',gap:'1rem'}}>
