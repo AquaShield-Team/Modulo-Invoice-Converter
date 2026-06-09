@@ -54,16 +54,7 @@ Puerto destino: Miami, FL
 
 > 💡 Si dejas las notas vacías, no aparecerá ningún recuadro en el PDF.
 
-### Paso 5: Adjuntar imagen (opcional)
-En la sección **"Imagen Adjunta"** puedes pegar una imagen (por ejemplo, un sello o firma):
-1. Copia la imagen en tu portapapeles (Ctrl+C sobre la imagen)
-2. Haz clic en el área que dice "Clic aquí y Ctrl+V para pegar imagen"
-3. Presiona **Ctrl+V**
-4. Ajusta el tamaño con el control deslizante si es necesario
-
-La imagen se incrustará en la parte inferior de cada página del PDF.
-
-### Paso 6: Descargar
+### Paso 5: Descargar
 Haz clic en el botón rojo **"⬇ DESCARGAR PDF"**.
 
 - Si cargaste **1 archivo** → se descarga un PDF llamado `Commercial_Invoice_[nombre original].pdf`
@@ -82,7 +73,10 @@ Cuando hay **pérdida de producto** (por daño, rechazo, etc.) y necesitas gener
 #### Paso 1: Cambiar al módulo Mermas
 Haz clic en la pestaña **"📦 Factura Mermas"** (arriba, junto a "📄 Commercial Invoice").
 
-#### Paso 2: Cargar la factura
+#### Paso 2: Seleccionar la plantilla
+Al cargar el PDF verás un selector de **PLANTILLA** en la parte superior (igual que en Commercial Invoice). Selecciona la plantilla correcta según la empresa de la factura (Empresas Aquachile o Los Fiordos). Las operaciones del perfil seleccionado se aplican al generar el PDF de merma.
+
+#### Paso 3: Cargar la factura
 Arrastra o selecciona **un PDF** de factura. La aplicación leerá automáticamente la tabla de productos y extraerá:
 - Código del producto
 - Cantidad de cajas
@@ -90,7 +84,7 @@ Arrastra o selecciona **un PDF** de factura. La aplicación leerá automáticame
 - Valor unitario
 - Total por línea
 
-#### Paso 3: Modificar las cajas
+#### Paso 4: Modificar las cajas
 En la columna **"Cajas"** verás campos editables (con borde naranja). Cambia el número de cajas en los productos que tengan merma.
 
 Al cambiar las cajas, automáticamente se recalcula:
@@ -99,10 +93,10 @@ Al cambiar las cajas, automáticamente se recalcula:
 - ✅ El **gran total** de la factura
 - Los valores modificados aparecen en naranja, y los originales tachados al lado
 
-#### Paso 4: Vista previa (opcional)
+#### Paso 5: Vista previa (opcional)
 Haz clic en **"◫ Mostrar Preview"** para ver cómo quedará el PDF final en tiempo real.
 
-#### Paso 5: Generar PDF
+#### Paso 6: Generar PDF
 Haz clic en **"⬇ Generar PDF Merma"**. Se descargará como `MERMA_[nombre original].pdf`.
 
 > 📝 **Nota:** El módulo de Mermas también aplica las transformaciones de Commercial Invoice (oculta el timbre, agrega "COMMERCIAL INVOICE", etc.) al generar el PDF.
